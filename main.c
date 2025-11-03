@@ -2,16 +2,45 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(){
-    InitWindow(1280,720,"magic battle"); // inicializando janela
+    const int screenX = 1280;
+    const int screenY = 720;
+    InitWindow(screenX,screenY,"magic battle"); // inicializando janela
+    SetTargetFPS(60); // fps
+    
+    Image img = LoadImage("img/mapa.png");
+    ImageResize(&img, screenX, screenY);
+
+    Texture2D mapa = LoadTextureFromImage(img);
+
+    UnloadImage(img);
+    int x=0;
+    int y=0;
+    int speed = 3;
 
     while(!WindowShouldClose()){// loop principal + windowshouldclose= analise se a janela esta fechada, nesse caso o loop roda enquanto a janela esta aberta por causa do not
+        // --- MOVIMENTO ---
+        if (IsKeyDown(KEY_RIGHT)) x += speed;
+        if (IsKeyDown(KEY_LEFT))  x -= speed;
+        if (IsKeyDown(KEY_UP))    y -= speed;
+        if (IsKeyDown(KEY_DOWN))  y += speed;
+
+        // --- LIMITE DE TELA ---
+        if (x < 0) x = 0;
+        if (x > screenX) x = screenX;
+        if (y < 0) y = 0;
+        if (y > screenY) y = screenY;
+        
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText("Hello Raylib!", 500, 350, 20, LIGHTGRAY);
+        DrawTexture(mapa,0,0,WHITE);
+        DrawCircle(x,y,10,RED);
         EndDrawing();
+        printf("posicao %d %d\n",x,y);
     }
+    UnloadTexture(mapa);
     CloseWindow();// fechar a janela
 
     return 0;
