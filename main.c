@@ -1,14 +1,16 @@
-#include <raylib>
+#include <raylib.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 int main(){
-    InitWindow(1280,720) // inicializando janela
+    InitWindow(1280,720,"magic battle"); // inicializando janela
 
     while(!WindowShouldClose()){// loop principal + windowshouldclose= analise se a janela esta fechada, nesse caso o loop roda enquanto a janela esta aberta por causa do not
-
-
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawText("Hello Raylib!", 500, 350, 20, LIGHTGRAY);
+        EndDrawing();
     }
     CloseWindow();// fechar a janela
 
