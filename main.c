@@ -10,16 +10,17 @@ int main(){
     InitWindow(screenX,screenY,"magic battle"); // inicializando janela
     SetTargetFPS(60); // fps
     
-    Image img = LoadImage("img/mapa.png");
-    ImageResize(&img, screenX, screenY);
+    //Image img = LoadImage("img/mapa.png");
+    //ImageResize(&img, screenX, screenY);
 
-    Texture2D mapa = LoadTextureFromImage(img);
-
-    UnloadImage(img);
-    int x=0;
-    int y=0;
+    //Texture2D mapa = LoadTextureFromImage(img);
+    // UnloadImage(img);
+    
+    int x=screenX/2;
+    int y=screenY/2;
+    
     int speed = 3;
-
+    char posText[32];
     while(!WindowShouldClose()){// loop principal + windowshouldclose= analise se a janela esta fechada, nesse caso o loop roda enquanto a janela esta aberta por causa do not
         // --- MOVIMENTO ---
         if (IsKeyDown(KEY_RIGHT)) x += speed;
@@ -33,14 +34,16 @@ int main(){
         if (y < 0) y = 0;
         if (y > screenY) y = screenY;
         
+        
+        sprintf(posText, "x: %d  y: %d", x, y);
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawTexture(mapa,0,0,WHITE);
+        //DrawTexture(mapa,0,0,WHITE);
+        DrawText(posText, 10, 10, 20, BLACK);
         DrawCircle(x,y,10,RED);
         EndDrawing();
-        printf("posicao %d %d\n",x,y);
+        
     }
-    UnloadTexture(mapa);
     CloseWindow();// fechar a janela
 
     return 0;
