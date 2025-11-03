@@ -1,0 +1,29 @@
+#makefile mac os
+
+# Compilador
+CC = clang
+
+# Caminhos de include e lib (para Apple Silicon)
+INCLUDE_PATH = -I/opt/homebrew/include
+LIB_PATH = -L/opt/homebrew/lib
+
+# Flags da Raylib e frameworks do macOS
+LIBS = -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+
+# Nome do executável
+TARGET = main
+
+# Arquivo fonte   tem que ir adicionando os arquivos qque a gente for criando
+SRC = main.c
+
+# Regra padrão
+all:
+	$(CC) $(SRC) -o $(TARGET) $(INCLUDE_PATH) $(LIB_PATH) $(LIBS)
+
+# Rodar o programa
+run: all
+	./$(TARGET)
+
+# Limpar binários
+clean:
+	rm -f $(TARGET)
