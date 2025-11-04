@@ -3,8 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-
-
+#include "mapa.h"
 
 
 int main(){
