@@ -33,12 +33,13 @@ int main(){
         ClearBackground(RAYWHITE);
 
         DrawTexture(fundo,0,0,WHITE);
+        /* SE VC TIRAR ELE COMO COMENTARIO, VC CONSEGUE VISUALIZAR A HIT BOX
         for (int y = 0; y < Map_y; y++) {
             for (int x = 0; x < Map_x; x++) {
                 Color c = (mapa[y][x] == Tile_Nao_anda) ? DARKGREEN : LIGHTGRAY;
                 DrawRectangle(x * Tile_size, y * Tile_size, Tile_size, Tile_size, c);
             }
-        }
+        }*/
         DrawText(posText, 10, 10, 20, BLACK);
         DrawCircle(p.x,p.y,6,RED);
 
