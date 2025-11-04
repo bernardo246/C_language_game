@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include "raylib.h"
+
+
 
 int main(){
     const int screenX = 1280;
@@ -10,11 +13,8 @@ int main(){
     InitWindow(screenX,screenY,"magic battle"); // inicializando janela
     SetTargetFPS(60); // fps
     
-    //Image img = LoadImage("img/mapa.png");
-    //ImageResize(&img, screenX, screenY);
-
-    //Texture2D mapa = LoadTextureFromImage(img);
-    // UnloadImage(img);
+    int mapa[Map_y][Map_x];
+    carregar_mapa(mapa);
     
     int x=screenX/2;
     int y=screenY/2;
@@ -38,7 +38,7 @@ int main(){
         sprintf(posText, "x: %d  y: %d", x, y);
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        //DrawTexture(mapa,0,0,WHITE);
+        
         DrawText(posText, 10, 10, 20, BLACK);
         DrawCircle(x,y,10,RED);
         EndDrawing();
