@@ -2,7 +2,7 @@
 #ifndef MAPA_H
 #define MAPA_H
 
-#include "raylib.h"
+
 
 #define Tile_size 16
 #define Map_x (1280/Tile_size)

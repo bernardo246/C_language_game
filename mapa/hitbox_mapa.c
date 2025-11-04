@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include "raylib.h"
+#include <raylib.h>
 
 #define Tile_estrada 0
 #define Tile_Nao_anda 1
