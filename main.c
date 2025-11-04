@@ -16,7 +16,7 @@ int main(){
     Texture fundo=carregar_mapa(mapa);
     
     //personagem
-    Personagem p = {630, 227, 2.5f};
+    Personagem p = {792, 174, 2.5f};
     
     
     
