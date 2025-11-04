@@ -5,10 +5,19 @@
 
 
 
-#define Tile_size 16
+#define Tile_size 8
 #define Map_x (1280/Tile_size)
 #define Map_y (720/Tile_size)
+#define Tile_estrada 0
+#define Tile_Nao_anda 1
 
-void carregar_mapa(int mapa[Map_y][Map_x]);
+typedef struct p{
+    float x;
+    float y;
+    float speed;
+}Personagem;
+
+Texture carregar_mapa(int mapa[Map_y][Map_x]);
+void logica_de_colisao_movimentacao(Personagem *p, int mapa[Map_y][Map_x]);
 
 #endif

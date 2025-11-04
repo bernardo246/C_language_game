@@ -13,33 +13,35 @@ int main(){
     SetTargetFPS(60); // fps
     
     int mapa[Map_y][Map_x];
-    carregar_mapa(mapa);
+    Texture fundo=carregar_mapa(mapa);
     
-    int x=screenX/2;
-    int y=screenY/2;
+    //personagem
+    Personagem p = {630, 227, 2.5f};
     
-    int speed = 3;
+    
+    
     char posText[32];
     while(!WindowShouldClose()){// loop principal + windowshouldclose= analise se a janela esta fechada, nesse caso o loop roda enquanto a janela esta aberta por causa do not
-        // --- MOVIMENTO ---
-        if (IsKeyDown(KEY_RIGHT)) x += speed;
-        if (IsKeyDown(KEY_LEFT))  x -= speed;
-        if (IsKeyDown(KEY_UP))    y -= speed;
-        if (IsKeyDown(KEY_DOWN))  y += speed;
-
-        // --- LIMITE DE TELA ---
-        if (x < 0) x = 0;
-        if (x > screenX) x = screenX;
-        if (y < 0) y = 0;
-        if (y > screenY) y = screenY;
         
-        
+        //atualiza a posição do personagem com a mecanica de colisao
+        logica_de_colisao_movimentacao(&p, mapa);
+        int x = (int)p.x;
+        int y = (int)p.y;
         sprintf(posText, "x: %d  y: %d", x, y);
+        
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        
+
+        DrawTexture(fundo,0,0,WHITE);
+        for (int y = 0; y < Map_y; y++) {
+            for (int x = 0; x < Map_x; x++) {
+                Color c = (mapa[y][x] == Tile_Nao_anda) ? DARKGREEN : LIGHTGRAY;
+                DrawRectangle(x * Tile_size, y * Tile_size, Tile_size, Tile_size, c);
+            }
+        }
         DrawText(posText, 10, 10, 20, BLACK);
-        DrawCircle(x,y,10,RED);
+        DrawCircle(p.x,p.y,6,RED);
+
         EndDrawing();
         
     }

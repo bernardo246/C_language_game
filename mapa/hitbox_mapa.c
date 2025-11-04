@@ -5,59 +5,52 @@
 #include <raylib.h>
 #include "hitbox_mapa.h" // Inclui o cabeçalho para usar as definições
 
-#define Tile_estrada 1
-#define Tile_Nao_anda 0
+#define Tile_estrada 0
+#define Tile_Nao_anda 1
 
 // A definição da função agora corresponde à declaração em mapa.h
-void carregar_mapa(int mapa[Map_y][Map_x])
-{
+Texture carregar_mapa(int mapa[Map_y][Map_x]) {
     const char *imagem_path = "img/mapa.png";
+    
+    // Carrega a imagem original
     Image img = LoadImage(imagem_path);
     if (!img.data) {
-        TraceLog(LOG_ERROR, "Erro: nao foi possivel carregar a imagem do mapa '%s'", imagem_path);
-        return;
+        printf("Erro: nao foi possivel carregar %s\n", imagem_path);
+        return (Texture){0};
     }
 
-    for (int y = 0; y < Map_y; y++) { // Corrigido para Map_y (minúsculo)
-        for (int x = 0; x < Map_x; x++) { // Corrigido para Map_x (minúsculo)
-            
-            int pixelX = x * Tile_size + Tile_size / 2; // Corrigido para Tile_size
-            int pixelY = y * Tile_size + Tile_size / 2; // Corrigido para Tile_size
+    // Redimensiona a imagem para a resolução da janela
+    ImageResize(&img, Map_x * Tile_size, Map_y * Tile_size);
+
+    // Preenche a matriz do mapa (hitbox)
+    for (int y = 0; y < Map_y; y++) {
+        for (int x = 0; x < Map_x; x++) {
+            int pixelX = x * Tile_size + Tile_size / 2;
+            int pixelY = y * Tile_size + Tile_size / 2;
 
             if (pixelX >= img.width)  pixelX = img.width - 1;
             if (pixelY >= img.height) pixelY = img.height - 1;
 
             Color cor = GetImageColor(img, pixelX, pixelY);
+            int brilho = (cor.r + cor.g + cor.b) / 3;
 
-            // baseado nas teoria rgb e no codigo de cada uma ele analiza as cores que atendem as especificações abaixo
-            int brilho = (cor.r + cor.g + cor.b) / 3; // para pegar a cor escura
-            
-            // Verde predominante -> não andável (grama/floresta)
-            if (cor.g > cor.r && cor.g > cor.b) {
+            if (cor.g > cor.r && cor.g > cor.b)
                 mapa[y][x] = Tile_Nao_anda;
-            } 
-            // Azul -> água -> não andável
-            else if (cor.b > 150 && cor.g < 100) {
+            else if (cor.b > 150 && cor.g < 100)
                 mapa[y][x] = Tile_Nao_anda;
-            } 
-            // Escuro -> não andável
-            else if (brilho < 50) {
+            else if (brilho < 50)
                 mapa[y][x] = Tile_Nao_anda;
-            } 
-            // Vermelho e demais cores claras -> andável
-            else {
+            else
                 mapa[y][x] = Tile_estrada;
-            }
         }
     }
 
-    // Exportar mapa para debug(cria o txt que contem a matriz da hitbox do mapa)
+    // Exportar mapa para debug (gera map_hitbox.txt)
     FILE *f = fopen("map_hitbox.txt", "w");
     if (f) {
-        for (int y = 0; y < Map_y; y++) { // Corrigido para Map_y
-            for (int x = 0; x < Map_x; x++) { // Corrigido para Map_x
+        for (int y = 0; y < Map_y; y++) {
+            for (int x = 0; x < Map_x; x++)
                 fprintf(f, "%d", mapa[y][x]);
-            }
             fprintf(f, "\n");
         }
         fclose(f);
@@ -66,5 +59,35 @@ void carregar_mapa(int mapa[Map_y][Map_x])
         printf("Erro ao salvar map_hitbox.txt\n");
     }
 
+    // Cria a textura para desenhar na GPU
+    Texture tex = LoadTextureFromImage(img);
+
+    // Libera a imagem da RAM
     UnloadImage(img);
+
+    return tex;
+}
+
+
+
+void logica_de_colisao_movimentacao(Personagem *p, int mapa[Map_y][Map_x]){
+    //coordenadas do personagem
+    float dx= p->x;
+    float dy= p->y;
+    //movimentaçao
+    if(IsKeyDown(KEY_RIGHT)) dx += p->speed;
+    if(IsKeyDown(KEY_LEFT))  dx -= p->speed;
+    if(IsKeyDown(KEY_UP))    dy -= p->speed;
+    if(IsKeyDown(KEY_DOWN))  dy += p->speed;
+    //calculo da tile que ele estaria dps do movimento = chunk que ele esta conjunto de pixels 4x4
+    int tileX= (int)(dx/Tile_size);
+    int tileY= (int)(dy/Tile_size);
+    
+    // Verificar se está dentro do mapa
+    if (tileX >= 0 && tileX < Map_x && tileY >= 0 && tileY < Map_y){
+        if(mapa[tileY][tileX] == Tile_estrada){
+            p->x=dx;
+            p->y=dy;
+        }
+    }
 }
