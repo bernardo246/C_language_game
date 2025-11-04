@@ -14,7 +14,7 @@ LIBS = -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework C
 TARGET = main
 
 # Arquivo fonte   tem que ir adicionando os arquivos qque a gente for criando
-SRC = main.c mapa/hitbox_mapa.c
+SRC = $(shell find . -name "*.c")
 
 
 # Regra padrão
