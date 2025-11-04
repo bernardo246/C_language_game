@@ -1,6 +1,7 @@
 // mapa.h
-#ifndef MAPA_H
-#define MAPA_H
+#ifndef HITBOX_MAPA_H
+#define HITBOX_MAPA_H
+
 
 
 

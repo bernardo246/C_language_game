@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#include "mapa.h"
+#include "mapa/hitbox_mapa.h"
 
 
 int main(){

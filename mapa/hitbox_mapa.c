@@ -3,7 +3,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include <raylib.h>
-#include "../mapa.h" // Inclui o cabeçalho para usar as definições
+#include "hitbox_mapa.h" // Inclui o cabeçalho para usar as definições
+
+#define Tile_estrada 1
+#define Tile_Nao_anda 0
 
 // A definição da função agora corresponde à declaração em mapa.h
 void carregar_mapa(int mapa[Map_y][Map_x])
