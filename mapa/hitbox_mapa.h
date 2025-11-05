@@ -15,7 +15,7 @@ typedef struct p{
     float x;
     float y;
     float speed;
-    Texture *t;
+    // Texture *t;
 }Personagem;
 
 Texture carregar_mapa(int mapa[Map_y][Map_x]);

@@ -1,5 +1,6 @@
 CC := gcc
-SRC := $(wildcard *.c) $(wildcard mapa/*.c)
+# Include sources from root, mapa, menus, and movimentacao directories
+SRC := $(wildcard *.c) $(wildcard mapa/*.c) $(wildcard menus/*.c) $(wildcard movimentacao/*.c)
 OBJ := $(SRC:.c=.o)
 TARGET := magic_battle.exe
 
