@@ -5,7 +5,7 @@
 
 
 
-#define Tile_size 8
+#define Tile_size 2
 #define Map_x (1280/Tile_size)
 #define Map_y (720/Tile_size)
 #define Tile_estrada 0
