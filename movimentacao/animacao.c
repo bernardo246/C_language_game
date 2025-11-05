@@ -3,31 +3,24 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include "mapa/hitbox_mapa.h"
 
-/*
-void animacao_do_mago_no_mapa(Texture *t, Personagem *p){
-    if(IsKeyDown(KEY_RIGHT)&& IsKeyDown(KEY_DOWN)){
-        t=DrawTexture(imagem,p->x,p->y,WHITE);
-    }
-    if(IsKeyDown(KEY_RIGHT)&& IsKeyDown(KEY_UP)){
-        t=DrawTexture(imagem,p->x,p->y,WHITE);
-    }
-    if(IsKeyDown(KEY_LEFT)&& IsKeyDown(KEY_DOWN)){
-        t=DrawTexture(imagem,p->x,p->y,WHITE);
-    }
-    if(IsKeyDown(KEY_LEFT)&& IsKeyDown(KEY_UP)){
-        t=DrawTexture(imagem,p->x,p->y,WHITE);
+
+void animacao_do_mago_no_mapa(Personagem *p){
+    if(IsKeyUp(KEY_RIGHT)&& IsKeyUp(KEY_DOWN)&& IsKeyUp(KEY_LEFT)&& IsKeyUp(KEY_UP)){
+        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
     }
     if(IsKeyDown(KEY_RIGHT)){
-        t=DrawTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
     }
     if(IsKeyDown(KEY_LEFT)){
-        t=DrawTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
     }
     if(IsKeyDown(KEY_UP)){
-        t=DrawTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
     }
     if(IsKeyDown(KEY_DOWN)){
-        t=DrawTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
     }
-}*/
+}
+
