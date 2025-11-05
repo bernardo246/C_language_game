@@ -1,6 +1,6 @@
 #include <raylib.h>
 #include <time.h>
-#include "mapa/hitbox_mapa.h"
+#include "../mapa/hitbox_mapa.h"
 
 // Função de controle de tempo
 int passou_tempo_animacao(double intervalo_ms) {
