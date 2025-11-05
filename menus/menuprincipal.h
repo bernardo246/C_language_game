@@ -2,7 +2,7 @@
 #define menus_menuprincipal_h
 
 
-void mostrar_menu(int *opcao);
+void mostrar_menu(int *opcao_tela);
 
 #endif
 

@@ -4,9 +4,11 @@
 #include <time.h>
 #include <raylib.h>
 #include "menus/menuprincipal.h"
-#include "../mapa/hitbox_mapa.h"
+#include "../mapa/hitbox_mapa.h" // Inclui o cabeçalho para usar as definições
 
-void mostrar_menu(int *opcao){
+
+
+void mostrar_menu(int *tela_opcao){
     // carrega a imagem original
     const char *imagem_path = "img/menuprincipal.png";
 
@@ -21,10 +23,59 @@ void mostrar_menu(int *opcao){
 
     Texture fundo = LoadTextureFromImage(img);
 
-    BeginDrawing();
-    ClearBackground(RAYWHITE);
-    DrawTexture(fundo,0,0,WHITE);
-    EndDrawing();
+    // Variável para armazenar a opção selecionada
+    const int menu_options = 2;
+    int opcao_menu = 0;
+
+    if (IsKeyPressed(KEY_DOWN)){
+        opcao_menu = (opcao_menu + 1) % menu_options;
+    }
+    if (IsKeyPressed(KEY_UP)){
+        opcao_menu = (opcao_menu - 1 + menu_options) % menu_options;
+    } 
+
+
+    // if (opcao > 1 || opcao < 0){
+    //     opcao = 0; // Garante que a opção fique entre 0 e 1
+    // }
     
-    *opcao = 0; // Mantém a opção como 0 para continuar no menu
+
+    if(IsKeyPressed(KEY_ENTER)){
+        if (opcao_menu == 0){
+            *tela_opcao = 1; // Muda para a tela de jogo
+        }
+        if (opcao_menu == 1){
+            CloseWindow(); // Fecha a janela e encerra o jogo
+        } 
+    }
+
+    Vector2 mouse = GetMousePosition();
+
+    char opcaoText[32];
+    sprintf(opcaoText, "Opcao selecionada: %d", opcao_menu);
+    char mouseText[32];
+    sprintf(mouseText, "Mouse X: %.2f  Mouse Y: %.2f", mouse.x, mouse.y);
+
+    
+
+
+    Color amarelosemi = (Color){238, 245, 39, 100 }; // cor do quadrado selecionado
+
+    //desenhando a tela do menu
+    BeginDrawing();
+
+    ClearBackground(RAYWHITE);
+
+    DrawTexture(fundo,0,0,WHITE); //fundo do menu
+    DrawText(opcaoText, 10, 10, 20, DARKGRAY); //opcao selecionada
+    DrawText(mouseText, 10, 40, 20, DARKGRAY); //coordenadas do mouse
+
+    if(opcao_menu == 0){
+        DrawRectangle(528, 534, 200, 50, amarelosemi); // Retângulo para "Iniciar Jogo"
+    }
+    if(opcao_menu == 1){
+        DrawRectangle(528,629 , 200, 50, amarelosemi); // Retângulo para "Sair"
+    }
+
+    EndDrawing();
 }
