@@ -40,6 +40,19 @@ Texture carregar_mapa(int mapa[Map_y][Map_x]) {
                 mapa[y][x] = Tile_Nao_anda;
             else if (brilho < 50)
                 mapa[y][x] = Tile_Nao_anda;
+            else if (brilho > 100 && abs(cor.r - cor.g) < 30 && abs(cor.r - cor.b) < 30 && abs(cor.g - cor.b) ) // tons de cinza
+                mapa[y][x] = Tile_Nao_anda;
+            // azul do mar 
+            else if (cor.b > cor.r + 50 && cor.b > cor.g + 50 && cor.b > 100)
+                mapa[y][x] = Tile_Nao_anda;
+            // mar claro
+            else if (cor.b > 150 && cor.g > 150 && cor.r < 100)
+                mapa[y][x] = Tile_Nao_anda;
+            // verde do mar
+            else if (cor.g > cor.b + 50 && cor.g > cor.r + 50 && cor.g > 100)
+                mapa[y][x] = Tile_Nao_anda;
+            else if(cor.r<40 && cor.g>100 && cor.b>50) 
+                mapa[y][x] = Tile_Nao_anda;
             else
                 mapa[y][x] = Tile_estrada;
         }
