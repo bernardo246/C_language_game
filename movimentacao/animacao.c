@@ -8,19 +8,19 @@
 
 void animacao_do_mago_no_mapa(Personagem *p){
     if(IsKeyUp(KEY_RIGHT)&& IsKeyUp(KEY_DOWN)&& IsKeyUp(KEY_LEFT)&& IsKeyUp(KEY_UP)){
-        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem);
     }
     if(IsKeyDown(KEY_RIGHT)){
-        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem);
     }
     if(IsKeyDown(KEY_LEFT)){
-        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem);
     }
     if(IsKeyDown(KEY_UP)){
-        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem);
     }
     if(IsKeyDown(KEY_DOWN)){
-        p->t=LoadTexture(imagem,p->x,p->y,WHITE);
+        p->t=LoadTexture(imagem);
     }
 }
 
