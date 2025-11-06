@@ -1,6 +1,6 @@
-#include <raylib.h>
-#include <time.h>
-#include "../mapa/hitbox_mapa.h"
+// #include <raylib.h>
+// #include <time.h>
+// #include "../mapa/hitbox_mapa.h"
 
 // // Função de controle de tempo
 // int passou_tempo_animacao(double intervalo_ms) {
@@ -54,17 +54,7 @@
 //         }
 //     }
 
-//     if(IsKeyDown(KEY_UP)){
-//         if (passou_tempo_animacao(2.0)){
-//             if(usou_animacao==0){
-//                 p->t=LoadTexture(imagem,p->x,p->y,WHITE);
-//                 usou_animacao=1;
-//             } else {
-//                 p->t=LoadTexture(imagem2,p->x,p->y,WHITE);
-//                 usou_animacao=0;
-//             }
-//         }
-//     }
+
 
 //     if(IsKeyDown(KEY_DOWN)){
 //         if (passou_tempo_animacao(2.0)){

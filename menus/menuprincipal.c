@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <raylib.h>
-#include "menus/menuprincipal.h"
+#include "menuprincipal.h"
 #include "../mapa/hitbox_mapa.h" // Inclui o cabeçalho para usar as definições
 
 int opcao_menu = 0;
@@ -47,10 +47,10 @@ void mostrar_menu(int *tela_opcao){
 
     Vector2 mouse = GetMousePosition();
 
-    char opcaoText[32];
-    sprintf(opcaoText, "Opcao selecionada: %d", opcao_menu);
-    char mouseText[32];
-    sprintf(mouseText, "Mouse X: %.2f  Mouse Y: %.2f", mouse.x, mouse.y);
+    // char opcaoText[32];
+    // sprintf(opcaoText, "Opcao selecionada: %d", opcao_menu);
+    // char mouseText[32];
+    // sprintf(mouseText, "Mouse X: %.2f  Mouse Y: %.2f", mouse.x, mouse.y);
 
     
 
@@ -62,8 +62,9 @@ void mostrar_menu(int *tela_opcao){
     ClearBackground(RAYWHITE);
 
     DrawTexture(fundo,0,0,WHITE); //fundo do menu
-    DrawText(opcaoText, 10, 10, 20, DARKGRAY); //opcao selecionada
-    DrawText(mouseText, 10, 40, 20, DARKGRAY); //coordenadas do mouse
+    
+    // DrawText(opcaoText, 10, 10, 20, DARKGRAY); //opcao selecionada
+    // DrawText(mouseText, 10, 40, 20, DARKGRAY); //coordenadas do mouse
 
     if(opcao_menu == 0){
         DrawRectangle(528, 534, 190, 50, amarelosemi); // Retângulo para "Iniciar Jogo"

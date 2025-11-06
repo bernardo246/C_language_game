@@ -51,15 +51,15 @@ int main(){
             ClearBackground(RAYWHITE);
 
             DrawTexture(fundo,0,0,WHITE);
-            // SE VC TIRAR ELE COMO COMENTARIO, VC CONSEGUE VISUALIZAR A HIT BOX
-            Color vermelhoSemi = (Color){ 255, 0, 0, 100 };
-            Color verdeSemi = (Color){0,255,0,100};
-            for (int y = 0; y < Map_y; y++) {
-                for (int x = 0; x < Map_x; x++) {
-                    Color c = (mapa[y][x] == Tile_Nao_anda) ? vermelhoSemi : verdeSemi;
-                    DrawRectangle(x * Tile_size, y * Tile_size, Tile_size, Tile_size, c);
-                }
-            }
+            // // SE VC TIRAR ELE COMO COMENTARIO, VC CONSEGUE VISUALIZAR A HIT BOX
+            // Color vermelhoSemi = (Color){ 255, 0, 0, 100 };
+            // Color verdeSemi = (Color){0,255,0,100};
+            // for (int y = 0; y < Map_y; y++) {
+            //     for (int x = 0; x < Map_x; x++) {
+            //         Color c = (mapa[y][x] == Tile_Nao_anda) ? vermelhoSemi : verdeSemi;
+            //         DrawRectangle(x * Tile_size, y * Tile_size, Tile_size, Tile_size, c);
+            //     }
+            // }
             DrawText(rgb, 10, 40, 20, BLACK);
             DrawText(posText, 10, 10, 20, BLACK);
             DrawCircle(p.x,p.y,6,RED);
