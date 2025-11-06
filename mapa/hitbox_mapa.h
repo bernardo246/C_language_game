@@ -19,24 +19,19 @@ typedef struct p{
 }Personagem;
 
 typedef struct coordenadas {
+    int mago;
     int x;
     int y;
+    int xf;
+    int yf;
     struct coordenadas *prox;
 } coordenadas;
 
-typedef struct area_de_batalha {
-    int iniciox;
-    int inicioy;
-    int fimx;
-    int fimy;
-    struct cordenadas *head;
-} area_de_batalha; 
 
 
 Texture carregar_mapa(int mapa[Map_y][Map_x]);
 void logica_de_colisao_movimentacao(Personagem *p, int mapa[Map_y][Map_x]);
-void criar_no(coordenadas **head,int cx,int cy);
-void area_de_batalha(coordenadas **head,int x,int y, int xf, int yf);
-bool vericacao_de_area(coordenadas **head,Personagem *p);
+void criar_no(coordenadas **head, int cx, int cy,int cxf , int cyf, int mago);
+int verificacao_de_area(coordenadas **head, Personagem *p,int mago);
 
 #endif

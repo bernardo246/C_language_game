@@ -9,15 +9,6 @@
 #define Tile_Nao_anda 1
 
 
-// definindo as areas de batalha
-area_de_batalha area1 = {370, 216, 412, 239, NULL}; // mago 1
-area_de_batalha area2 = {499, 391, 520, 412, NULL}; // mago 2
-area_de_batalha area3 = {777, 626, 819, 654, NULL}; // mago 3
-
-
-
-
-
 // A definição da função agora corresponde à declaração em mapa.h
 Texture carregar_mapa(int mapa[Map_y][Map_x]) {
     const char *imagem_path = "img/mapa.png";
@@ -114,16 +105,20 @@ void logica_de_colisao_movimentacao(Personagem *p, int mapa[Map_y][Map_x]){
         }
     }
 }
-
+//main
+//coordenadas *hitbox_no_mapa_magos=null
+//criar_no(&hitbox_no_mapa_magos, o resto dos parametros) para cada mago chama essa função pra cada mago
 
 // Função para criar um novo nó na lista ligada
-void criar_no(coordenadas **head, int cx, int cy) {
+void criar_no(coordenadas **head, int cx, int cy,int cxf , int cyf, int mago) {
     coordenadas *novo = (coordenadas *)malloc(sizeof(coordenadas));
     if (novo == NULL) {
         printf("Erro ao alocar memória!\n");
         return;
     }
-
+    novo->mago = mago;
+    novo->xf= cxf;
+    novo->yf= cyf;   
     novo->x = cx;
     novo->y = cy;
     novo->prox = NULL; 
@@ -139,21 +134,10 @@ void criar_no(coordenadas **head, int cx, int cy) {
     }
 }
 
-
-
-// Função para definir uma área de batalha
-void area_de_batalha(coordenadas **head, int x, int y, int xf, int yf) {
-    for (int i = y; i < yf; i++) {
-        for (int j = x; j < xf; j++) {
-            criar_no(head, j, i); 
-        }
-    }
-}
-
-int verificacao_de_area(coordenadas **head, Personagem *p) {
+int verificacao_de_area(coordenadas **head, Personagem *p,int mago) {
     coordenadas *aux = *head;
-    while (aux != NULL) {
-        if (aux->x == p->x && aux->y == p->y) {
+    while (aux->mago !=mago ) {
+        if(p->x>=aux->x && p->x<=aux->xf && p->y>=aux->y && p->y<=aux->yf){
             return 1;
         }
         aux = aux->prox;

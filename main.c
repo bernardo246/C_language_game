@@ -21,11 +21,16 @@ int main(){
     
     // opcoes de tela
     int opcao = 0;
-    
+   
+    //lista de locais ondee vai ser iniciada a batalha
+    coordenadas *hitbox_para_iniciar_batalha=NULL;
+    criar_no(&hitbox_para_iniciar_batalha,370,216,412,239,1);
+    criar_no(&hitbox_para_iniciar_batalha,499,391,520,412,2);
+    criar_no(&hitbox_para_iniciar_batalha,777,626,819,654,3);
     
     char posText[32];
     char rgb[64];
-    while(!WindowShouldClose()){// loop principal + windowshouldclose= analise se a janela esta fechada, nesse caso o loop roda enquanto a janela esta aberta por causa do not
+    while(!WindowShouldClose()){
         
         if(opcao==0){
             //menu principal
@@ -65,10 +70,25 @@ int main(){
             DrawCircle(p.x,p.y,6,RED);
 
             EndDrawing();
+            if(verificacao_de_area(&hitbox_para_iniciar_batalha,&p,1)){
+                BeginDrawing();
+                DrawText("press space to start battle",10,60,20,BLACK);
+                EndDrawing();
+            }
+            if(verificacao_de_area(&hitbox_para_iniciar_batalha,&p,2)){
+                BeginDrawing();
+                DrawText("press space to start battle",10,60,20,BLACK);
+                EndDrawing();
+            }
+            if(verificacao_de_area(&hitbox_para_iniciar_batalha,&p,3)){
+                BeginDrawing();
+                DrawText("press space to start battle",10,60,20,BLACK);
+                EndDrawing();
+            }
         }
         
     }
-    CloseWindow();// fechar a janela
+    CloseWindow();
 
     return 0;
 }
