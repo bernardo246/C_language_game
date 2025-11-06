@@ -8,6 +8,13 @@
 #define Tile_estrada 0
 #define Tile_Nao_anda 1
 
+
+// definindo as areas de batalha
+area_de_batalha area1 = {370, 216, 412, 239, NULL}; // mago 1
+
+
+
+
 // A definição da função agora corresponde à declaração em mapa.h
 Texture carregar_mapa(int mapa[Map_y][Map_x]) {
     const char *imagem_path = "img/mapa.png";
@@ -105,17 +112,8 @@ void logica_de_colisao_movimentacao(Personagem *p, int mapa[Map_y][Map_x]){
     }
 }
 
-typedef struct coordenadas {
-    int x;
-    int y;
-    struct coordenadas *prox;
-} coordenadas;
 
-typedef struct {
-    int x;
-    int y;
-} Personagem;
-
+// Função para criar um novo nó na lista ligada
 void criar_no(coordenadas **head, int cx, int cy) {
     coordenadas *novo = (coordenadas *)malloc(sizeof(coordenadas));
     if (novo == NULL) {
@@ -138,6 +136,9 @@ void criar_no(coordenadas **head, int cx, int cy) {
     }
 }
 
+
+
+// Função para definir uma área de batalha
 void area_de_batalha(coordenadas **head, int x, int y, int xf, int yf) {
     for (int i = y; i < yf; i++) {
         for (int j = x; j < xf; j++) {

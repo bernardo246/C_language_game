@@ -24,6 +24,13 @@ typedef struct coordenadas {
     struct coordenadas *prox;
 } coordenadas;
 
+typedef struct area_de_batalha {
+    int iniciox;
+    int inicioy;
+    int fimx;
+    int fimy;
+    struct cordenadas *head;
+} area_de_batalha; 
 
 
 Texture carregar_mapa(int mapa[Map_y][Map_x]);
