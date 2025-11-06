@@ -44,7 +44,10 @@ Você precisará ter o **GCC** (ou Clang) e a biblioteca **Raylib** instalada em
     ```bash
     make
     ```
-
+    ou 
+    ```bash
+     make -f MakefileMacOs run
+    ```
     *Se não houver um Makefile, você pode compilar manualmente (exemplo para Linux):*
     ```bash
     gcc src/main.c -o magic_battle -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
@@ -63,20 +66,7 @@ Você precisará ter o **GCC** (ou Clang) e a biblioteca **Raylib** instalada em
 | `Enter` ou `Z` | Confirmar seleção / Avançar diálogo |
 | `ESC` ou `X` | Voltar / Cancelar (se aplicável) |
 
-## 🖼️ Screenshots (Opcional)
 
-*(Adicione aqui algumas capturas de tela do seu jogo em ação)*
-
-[Imagem da tela de título]
-[Imagem de uma batalha em andamento]
-
-## 📝 A Fazer (Roadmap)
-
-* [ ] Adicionar mais magias
-* [ ] Implementar um sistema de itens (poções de HP/MP)
-* [ ] Adicionar música de fundo e efeitos sonoros
-* [ ] Criar uma tela de "Game Over" e "Vitória"
-* [ ] Balancear a dificuldade da IA
 
 ## 📄 Licença
 
