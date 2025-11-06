@@ -45,7 +45,7 @@ void mostrar_menu(int *tela_opcao){
         } 
     }
 
-    Vector2 mouse = GetMousePosition();
+    // Vector2 mouse = GetMousePosition();
 
     // char opcaoText[32];
     // sprintf(opcaoText, "Opcao selecionada: %d", opcao_menu);
@@ -62,7 +62,7 @@ void mostrar_menu(int *tela_opcao){
     ClearBackground(RAYWHITE);
 
     DrawTexture(fundo,0,0,WHITE); //fundo do menu
-    
+
     // DrawText(opcaoText, 10, 10, 20, DARKGRAY); //opcao selecionada
     // DrawText(mouseText, 10, 40, 20, DARKGRAY); //coordenadas do mouse
 
