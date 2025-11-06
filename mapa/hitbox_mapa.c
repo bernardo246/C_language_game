@@ -136,10 +136,11 @@ void criar_no(coordenadas **head, int cx, int cy,int cxf , int cyf, int mago) {
 
 int verificacao_de_area(coordenadas **head, Personagem *p,int mago) {
     coordenadas *aux = *head;
-    while (aux->mago !=mago ) {
+    while (aux!=NULL ) {
+        if(aux->mago==mago){
         if(p->x>=aux->x && p->x<=aux->xf && p->y>=aux->y && p->y<=aux->yf){
             return 1;
-        }
+        }}
         aux = aux->prox;
     }
     return 0;
