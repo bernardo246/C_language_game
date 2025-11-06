@@ -11,6 +11,9 @@
 
 // definindo as areas de batalha
 area_de_batalha area1 = {370, 216, 412, 239, NULL}; // mago 1
+area_de_batalha area2 = {499, 391, 520, 412, NULL}; // mago 2
+area_de_batalha area3 = {777, 626, 819, 654, NULL}; // mago 3
+
 
 
 
