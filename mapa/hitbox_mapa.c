@@ -104,3 +104,58 @@ void logica_de_colisao_movimentacao(Personagem *p, int mapa[Map_y][Map_x]){
         }
     }
 }
+
+typedef struct coordenadas {
+    int x;
+    int y;
+    struct coordenadas *prox;
+} coordenadas;
+
+typedef struct {
+    int x;
+    int y;
+} Personagem;
+
+void criar_no(coordenadas **head, int cx, int cy) {
+    coordenadas *novo = (coordenadas *)malloc(sizeof(coordenadas));
+    if (novo == NULL) {
+        printf("Erro ao alocar memória!\n");
+        return;
+    }
+
+    novo->x = cx;
+    novo->y = cy;
+    novo->prox = NULL; 
+
+    if (*head == NULL) {
+        *head = novo;
+    } else {
+        coordenadas *aux = *head;
+        while (aux->prox != NULL) {
+            aux = aux->prox;
+        }
+        aux->prox = novo;
+    }
+}
+
+void area_de_batalha(coordenadas **head, int x, int y, int xf, int yf) {
+    for (int i = y; i < yf; i++) {
+        for (int j = x; j < xf; j++) {
+            criar_no(head, j, i); 
+        }
+    }
+}
+
+int verificacao_de_area(coordenadas **head, Personagem *p) {
+    coordenadas *aux = *head;
+    while (aux != NULL) {
+        if (aux->x == p->x && aux->y == p->y) {
+            return 1;
+        }
+        aux = aux->prox;
+    }
+    return 0;
+}
+
+
+//x=370 y=216 / x=412 y=239 mago 1
