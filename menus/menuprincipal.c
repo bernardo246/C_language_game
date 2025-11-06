@@ -6,7 +6,7 @@
 #include "menus/menuprincipal.h"
 #include "../mapa/hitbox_mapa.h" // Inclui o cabeçalho para usar as definições
 
-
+int opcao_menu = 0;
 
 void mostrar_menu(int *tela_opcao){
     // carrega a imagem original
@@ -23,21 +23,17 @@ void mostrar_menu(int *tela_opcao){
 
     Texture fundo = LoadTextureFromImage(img);
 
-    // Variável para armazenar a opção selecionada
-    const int menu_options = 2;
-    int opcao_menu = 0;
-
     if (IsKeyPressed(KEY_DOWN)){
-        opcao_menu = (opcao_menu + 1) % menu_options;
+        opcao_menu ++;
     }
     if (IsKeyPressed(KEY_UP)){
-        opcao_menu = (opcao_menu - 1 + menu_options) % menu_options;
+        opcao_menu --;
     } 
 
 
-    // if (opcao > 1 || opcao < 0){
-    //     opcao = 0; // Garante que a opção fique entre 0 e 1
-    // }
+    if (opcao_menu > 1 || opcao_menu < 0){
+        opcao_menu = 0; // Garante que a opção fique entre 0 e 1
+    }
     
 
     if(IsKeyPressed(KEY_ENTER)){
@@ -58,7 +54,6 @@ void mostrar_menu(int *tela_opcao){
 
     
 
-
     Color amarelosemi = (Color){238, 245, 39, 100 }; // cor do quadrado selecionado
 
     //desenhando a tela do menu
@@ -71,10 +66,10 @@ void mostrar_menu(int *tela_opcao){
     DrawText(mouseText, 10, 40, 20, DARKGRAY); //coordenadas do mouse
 
     if(opcao_menu == 0){
-        DrawRectangle(528, 534, 200, 50, amarelosemi); // Retângulo para "Iniciar Jogo"
+        DrawRectangle(528, 534, 190, 50, amarelosemi); // Retângulo para "Iniciar Jogo"
     }
     if(opcao_menu == 1){
-        DrawRectangle(528,629 , 200, 50, amarelosemi); // Retângulo para "Sair"
+        DrawRectangle(540,629 , 160, 50, amarelosemi); // Retângulo para "Sair"
     }
 
     EndDrawing();
