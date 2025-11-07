@@ -13,8 +13,9 @@ int main(){
     InitWindow(screenX,screenY,"magic battle"); // inicializando janela
     SetTargetFPS(60); // fps
     
+    //mapa
     int mapa[Map_y][Map_x];
-    
+    Texture fundo=carregar_mapa(mapa);
     
     //personagem
     Personagem p = {792, 174, 2.5f};
@@ -38,9 +39,7 @@ int main(){
         }
 
         if(opcao==1){
-            //tela de jogo
-            Texture fundo=carregar_mapa(mapa);
-
+            
             //atualiza a posição do personagem com a mecanica de colisao
             logica_de_colisao_movimentacao(&p, mapa);
             int x = (int)p.x;
@@ -68,29 +67,20 @@ int main(){
             DrawText(rgb, 10, 40, 20, BLACK);
             DrawText(posText, 10, 10, 20, BLACK);
             DrawCircle(p.x,p.y,6,RED);
-
+            if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
+            DrawText("press space to start battle", 10, 60, 20, BLACK);
+            if (IsKeyPressed(KEY_SPACE)) {
+                DrawText("implementar alguma condicao para iniciar a batalha", 10, 80, 20, BLACK);
+            }
+            }
             EndDrawing();
-            if(verificacao_de_area(&hitbox_para_iniciar_batalha,&p,1)){
-                BeginDrawing();
-                DrawText("press space to start battle",10,60,20,BLACK);
-                EndDrawing();
-            }
-            if(verificacao_de_area(&hitbox_para_iniciar_batalha,&p,2)){
-                BeginDrawing();
-                DrawText("press space to start battle",10,60,20,BLACK);
-                EndDrawing();
-            }
-            if(verificacao_de_area(&hitbox_para_iniciar_batalha,&p,3)){
-                BeginDrawing();
-                DrawText("press space to start battle",10,60,20,BLACK);
-                EndDrawing();
-            }
-        }
+
         
     }
+}
     CloseWindow();
-
     return 0;
+    
 }
 
 //funcao para escrever algo na tela :
