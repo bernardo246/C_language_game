@@ -5,6 +5,7 @@
 #include <time.h>
 #include "mapa/hitbox_mapa.h"
 #include "menus/menuprincipal.h"
+#include "movimentacao/animacao.h"
 
 
 int main(){
@@ -18,7 +19,8 @@ int main(){
     Texture fundo=carregar_mapa(mapa);
     
     //personagem
-    Personagem p = {792, 174, 2.5f};
+    Personagem p = {792, 174, 2.5f, LoadTexture("img/wizard/sul/imagem1.png")};
+    float escala = 0.05f;
     
     // opcoes de tela
     int opcao = 0;
@@ -67,6 +69,10 @@ int main(){
             DrawText(rgb, 10, 40, 20, BLACK);
             DrawText(posText, 10, 10, 20, BLACK);
             DrawCircle(p.x,p.y,6,RED);
+            
+            animacao_do_mago_no_mapa(&p);
+            DrawTextureEx(p.t, (Vector2){ p.x - (p.t.width*escala)/2, p.y - ((p.t.height*escala)-430 * escala) }, 0.0f, escala, WHITE); // estou desenhando redimensionando. esse -430 eh pq a imagem do mago tem mt espaço vazio embaixo
+
             if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
             DrawText("press space to start battle", 10, 60, 20, BLACK);
             if (IsKeyPressed(KEY_SPACE)) {
