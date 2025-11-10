@@ -61,15 +61,16 @@ void mov_battle(Personagem_em_batalha *p)
 }
 
 
-void spawn_henchman_offscreen(henchman *h, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {// fazer uma lista deles e gerencia mutiplos deles
+void spawn_henchman_offscreen(henchman *h, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
     h->t = t;
     h->speed = speed;
     h->hp = hp;
     h->damage = damage;
-    h->active = 1; 
+    h->active = 1;
+
     int side = rand() % 4;
 
-    switch(side) {
+    switch (side) {
         case 0: // esquerda
             h->x = -t.width;
             h->y = (float)(rand() % screenHeight);
@@ -90,25 +91,37 @@ void spawn_henchman_offscreen(henchman *h, Texture t, float speed, int hp, int d
 }
 
 
-void mov_henchman(henchman *h, Personagem_em_batalha *p){
-    // Calcula direção do henchman até o personagem
+// Cria um novo henchman se houver espaço livre
+/*
+void spawn_new_henchman(Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
+    for (int i = 0; i < MAX_HENCHMEN; i++) {
+        if (!henchmen[i].active) { // encontra um slot livre
+            spawn_henchman_offscreen(&henchmen[i], t, speed, hp, damage, screenWidth, screenHeight);
+            break; // sai do loop após criar um
+        }
+    }
+}
+*/
+
+// Move e desenha um único henchman
+void mov_henchman(henchman *h, Personagem_em_batalha *p) {
+    // Calcula direção
     Vector2 dir = { p->x - h->x, p->y - h->y };
-    
-    float dis_btw_h_x_p = sqrtf(dir.x * dir.x + dir.y * dir.y);// é pitagoras + definicao de onde ele tem que percorrer(hipotenusa)
-    if (dis_btw_h_x_p > 0.01f)  
-    {
+
+    float dis_btw_h_x_p = sqrtf(dir.x * dir.x + dir.y * dir.y);
+    if (dis_btw_h_x_p > 0.01f) {
         dir.x /= dis_btw_h_x_p;
         dir.y /= dis_btw_h_x_p;
     }
 
-    // Move o henchman
+    // Move
     h->x += dir.x * h->speed;
     h->y += dir.y * h->speed;
 
-    // Calcula ângulo para olhar para o personagem
+    // Calcula ângulo
     float angle = atan2(p->y - h->y, p->x - h->x);
 
-    // Desenha o henchman rotacionado
+    // Desenha
     DrawTexturePro(
         h->t,
         (Rectangle){0, 0, h->t.width, h->t.height},
@@ -117,6 +130,21 @@ void mov_henchman(henchman *h, Personagem_em_batalha *p){
         angle * RAD2DEG,
         WHITE
     );
+}
+
+
+// Atualiza todos os henchmen ativos
+void update_henchmen(Personagem_em_batalha *p) {
+    for (int i = 0; i < MAX_HENCHMEN; i++) {
+        if (henchmen[i].active) {
+            mov_henchman(&henchmen[i], p);
+
+            // Exemplo: desativa se morrer
+            if (henchmen[i].hp <= 0) {
+                henchmen[i].active = 0;
+            }
+        }
+    }
 }
 
 Projectile* spawn_projectile(Personagem_em_batalha *p, Vector2 mouse, Texture2D t) {// alterar para gerenciar para multiplos disparos
