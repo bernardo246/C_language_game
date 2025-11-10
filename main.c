@@ -19,7 +19,7 @@ int main(){
     Texture fundo=carregar_mapa(mapa);
     
     //personagem
-    Personagem p = {792, 174, 2.5f, LoadTexture("img/wizard/sul/imagem1.png")};
+    Personagem p = {792, 174, 1.5f, LoadTexture("img/wizard/sul/imagem1.png")};
     float escala = 0.05f;
     
     // opcoes de tela
@@ -83,7 +83,8 @@ int main(){
 
         
     }
-}
+}   
+    descarregar_textura();
     CloseWindow();
     return 0;
     
