@@ -32,7 +32,7 @@ int main(){
     criar_no(&hitbox_para_iniciar_batalha,777,626,819,654,3);
     
     char posText[32];
-    char rgb[64];
+    // char rgb[64];
     while(!WindowShouldClose()){
         
         if(opcao==0){
@@ -48,10 +48,10 @@ int main(){
             int y = (int)p.y;
             sprintf(posText, "x: %d  y: %d", x, y);
 
-            // mostra o valor RGB do pixel sob o mouse
-            Vector2 mouse = GetMousePosition();
-            Color pixel = GetImageColor(LoadImageFromScreen(), mouse.x, mouse.y);
-            sprintf(rgb,"R:%d G:%d B:%d A:%d\n", pixel.r, pixel.g, pixel.b, pixel.a);
+            // // mostra o valor RGB do pixel sob o mouse
+            // Vector2 mouse = GetMousePosition();
+            // Color pixel = GetImageColor(LoadImageFromScreen(), mouse.x, mouse.y);
+            // sprintf(rgb,"R:%d G:%d B:%d A:%d\n", pixel.r, pixel.g, pixel.b, pixel.a);
 
             BeginDrawing();
             ClearBackground(RAYWHITE);
@@ -66,19 +66,19 @@ int main(){
             //         DrawRectangle(x * Tile_size, y * Tile_size, Tile_size, Tile_size, c);
             //     }
             // }
-            DrawText(rgb, 10, 40, 20, BLACK);
+            // DrawText(rgb, 10, 40, 20, BLACK);
             DrawText(posText, 10, 10, 20, BLACK);
             DrawCircle(p.x,p.y,6,RED);
             
             animacao_do_mago_no_mapa(&p);
             DrawTextureEx(p.t, (Vector2){ p.x - (p.t.width*escala)/2, p.y - ((p.t.height*escala)-430 * escala) }, 0.0f, escala, WHITE); // estou desenhando redimensionando. esse -430 eh pq a imagem do mago tem mt espaço vazio embaixo
 
-                if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
-                DrawText("press space to start battle", 10, 60, 20, BLACK);
-                    if (IsKeyPressed(KEY_SPACE)) {
-                        DrawText("Batalha iniciada!", 10, 80, 20, BLACK);
-                        opcao = 2; // Muda para a tela de batalha
-                    }
+            if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
+            DrawText("press space to start battle", 10, 60, 20, BLACK);
+                if (IsKeyPressed(KEY_SPACE)) {
+                    DrawText("Batalha iniciada!", 10, 80, 20, BLACK);
+                    opcao = 2; // Muda para a tela de batalha
+                }
             EndDrawing();
             }
             
@@ -86,7 +86,7 @@ int main(){
         
         }
     }   
-    descarregar_texturas();
+    // descarregar_texturas();
     CloseWindow();
     return 0;
     
