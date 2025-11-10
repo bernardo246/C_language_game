@@ -7,5 +7,5 @@
 
 int passou_tempo_animacao(double intervalo_ms);
 void animacao_do_mago_no_mapa(Personagem *p);
-// void descarregar_texturas();
+void descarregar_texturas();
 #endif

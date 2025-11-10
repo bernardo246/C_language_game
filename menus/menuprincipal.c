@@ -22,6 +22,7 @@ void mostrar_menu(int *tela_opcao){
     ImageResize(&img, Map_x * Tile_size, Map_y * Tile_size);
 
     Texture fundo = LoadTextureFromImage(img);
+    UnloadImage(img); // evita vazamento de RAM do Image
 
     if (IsKeyPressed(KEY_DOWN)){
         opcao_menu ++;
@@ -41,7 +42,7 @@ void mostrar_menu(int *tela_opcao){
             *tela_opcao = 1; // Muda para a tela de jogo
         }
         if (opcao_menu == 1){
-            CloseWindow(); // Fecha a janela e encerra o jogo
+            *tela_opcao = -1; // Fecha a janela e encerra o jogo
         } 
     }
 
@@ -74,4 +75,11 @@ void mostrar_menu(int *tela_opcao){
     }
 
     EndDrawing();
+    UnloadTexture(fundo); // evita vazamento de VRAM no menu
+}
+
+// Descarrega recursos persistentes do menu (no design atual, não há persistência)
+// Mantemos a função para corresponder ao header e evitar erro de link.
+void descarregar_menu(void) {
+    // no-op: nada a descarregar aqui
 }

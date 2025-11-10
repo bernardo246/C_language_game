@@ -18,8 +18,8 @@ int main(){
     int mapa[Map_y][Map_x];
     Texture fundo=carregar_mapa(mapa);
     
-    //personagem
-    Personagem p = {792, 174, 1.5f, LoadTexture("img/wizard/sul/imagem1.png")};
+    // personagem (textura será definida pela animação; evita carregar aqui)
+    Personagem p = (Personagem){792, 174, 1.5f, (Texture){0}};
     float escala = 0.05f;
     
     // opcoes de tela
@@ -36,8 +36,10 @@ int main(){
     while(!WindowShouldClose()){
         
         if(opcao==0){
-            //menu principal
+            // menu principal (desenha e atualiza a opção)
             mostrar_menu(&opcao);
+            if (opcao == -1) break; // sair pelo menu
+            continue; // não desenhar o jogo quando ainda no menu
         }
 
         if(opcao==1){
@@ -74,19 +76,24 @@ int main(){
             DrawTextureEx(p.t, (Vector2){ p.x - (p.t.width*escala)/2, p.y - ((p.t.height*escala)-430 * escala) }, 0.0f, escala, WHITE); // estou desenhando redimensionando. esse -430 eh pq a imagem do mago tem mt espaço vazio embaixo
 
             if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
-            DrawText("press space to start battle", 10, 60, 20, BLACK);
+                DrawText("press space to start battle", 10, 60, 20, BLACK);
                 if (IsKeyPressed(KEY_SPACE)) {
                     DrawText("Batalha iniciada!", 10, 80, 20, BLACK);
                     opcao = 2; // Muda para a tela de batalha
                 }
-            EndDrawing();
             }
+            EndDrawing();
             
 
         
         }
     }   
-    // descarregar_texturas();
+
+
+    // limpeza final
+    descarregar_texturas();
+    UnloadTexture(fundo);
+    descarregar_menu();
     CloseWindow();
     return 0;
     

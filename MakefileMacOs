@@ -1,4 +1,4 @@
-#makefile mac os
+x#makefile mac os
 
 # Compilador
 CC = clang
