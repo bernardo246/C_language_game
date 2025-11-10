@@ -73,17 +73,19 @@ int main(){
             animacao_do_mago_no_mapa(&p);
             DrawTextureEx(p.t, (Vector2){ p.x - (p.t.width*escala)/2, p.y - ((p.t.height*escala)-430 * escala) }, 0.0f, escala, WHITE); // estou desenhando redimensionando. esse -430 eh pq a imagem do mago tem mt espaço vazio embaixo
 
-            if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
-            DrawText("press space to start battle", 10, 60, 20, BLACK);
-            if (IsKeyPressed(KEY_SPACE)) {
-                DrawText("implementar alguma condicao para iniciar a batalha", 10, 80, 20, BLACK);
-            }
-            }
+                if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
+                DrawText("press space to start battle", 10, 60, 20, BLACK);
+                    if (IsKeyPressed(KEY_SPACE)) {
+                        DrawText("Batalha iniciada!", 10, 80, 20, BLACK);
+                        opcao = 2; // Muda para a tela de batalha
+                    }
             EndDrawing();
+            }
+            
 
         
-    }
-}   
+        }
+    }   
     descarregar_textura();
     CloseWindow();
     return 0;
