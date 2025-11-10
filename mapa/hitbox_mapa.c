@@ -8,6 +8,7 @@
 #define Tile_estrada 0
 #define Tile_Nao_anda 1
 
+int matriz_mapa = 0;
 
 // A definição da função agora corresponde à declaração em mapa.h
 Texture carregar_mapa(int mapa[Map_y][Map_x]) {
@@ -59,20 +60,23 @@ Texture carregar_mapa(int mapa[Map_y][Map_x]) {
         }
     }
 
+
     // Exportar mapa para debug (gera map_hitbox.txt)
     FILE *f = fopen("map_hitbox.txt", "w");
-    if (f) {
-        for (int y = 0; y < Map_y; y++) {
-            for (int x = 0; x < Map_x; x++)
-                fprintf(f, "%d", mapa[y][x]);
-            fprintf(f, "\n");
+        if(!matriz_mapa){
+            if (f) {
+                for (int y = 0; y < Map_y; y++) {
+                    for (int x = 0; x < Map_x; x++)
+                        fprintf(f, "%d", mapa[y][x]);
+                    fprintf(f, "\n");
+                }
+                fclose(f);
+                printf("Arquivo map_hitbox.txt gerado com sucesso!\n");
+                matriz_mapa = 1;
+            } else {
+                printf("Erro ao salvar map_hitbox.txt\n");
+            }
         }
-        fclose(f);
-        printf("Arquivo map_hitbox.txt gerado com sucesso!\n");
-    } else {
-        printf("Erro ao salvar map_hitbox.txt\n");
-    }
-
     // Cria a textura para desenhar na GPU
     Texture tex = LoadTextureFromImage(img);
 

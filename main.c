@@ -86,7 +86,7 @@ int main(){
         
         }
     }   
-    descarregar_textura();
+    descarregar_texturas();
     CloseWindow();
     return 0;
     

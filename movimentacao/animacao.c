@@ -34,7 +34,7 @@ void carregar_textura(){
 
 
 // descarregar texturas
-void descarregar_textura(){
+void descarregar_texturas(){
     UnloadTexture(norte[0]);
     UnloadTexture(norte[1]);
     UnloadTexture(norte[2]);
