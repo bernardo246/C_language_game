@@ -61,75 +61,83 @@ void mov_battle(Personagem_em_batalha *p)
 }
 
 
-void spawn_henchman_offscreen(henchman *h, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
-    h->t = t;
-    h->speed = speed;
-    h->hp = hp;
-    h->damage = damage;
-    h->active = 1;
+#define MAX_HENCH 10
 
-    int side = rand() % 4;
+void spawn_henchman_offscreen(henchman *henchList, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
+    // procura um slot livre
+    int spaw=0;
+    for (int i = 0; i < MAX_HENCH; i++) {
+        if (!henchList[i].active) {
+            henchList[i].t = t;
+            henchList[i].speed = speed;
+            henchList[i].hp = hp;
+            henchList[i].damage = damage;
+            henchList[i].active = 1;
 
-    switch (side) {
-        case 0: // esquerda
-            h->x = -t.width;
-            h->y = (float)(rand() % screenHeight);
-            break;
-        case 1: // direita
-            h->x = screenWidth + t.width;
-            h->y = (float)(rand() % screenHeight);
-            break;
-        case 2: // cima
-            h->x = (float)(rand() % screenWidth);
-            h->y = -t.height;
-            break;
-        case 3: // baixo
-            h->x = (float)(rand() % screenWidth);
-            h->y = screenHeight + t.height;
-            break;
-    }
-}
+            int side = rand() % 4;
 
-
-// Cria um novo henchman se houver espaço livre
-/*
-void spawn_new_henchman(Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
-    for (int i = 0; i < MAX_HENCHMEN; i++) {
-        if (!henchmen[i].active) { // encontra um slot livre
-            spawn_henchman_offscreen(&henchmen[i], t, speed, hp, damage, screenWidth, screenHeight);
-            break; // sai do loop após criar um
+            switch (side) {
+                case 0: // esquerda
+                    henchList[i].x = -t.width;
+                    henchList[i].y = (float)(rand() % screenHeight);
+                    break;
+                case 1: // direita
+                    henchList[i].x = screenWidth + t.width;
+                    henchList[i].y = (float)(rand() % screenHeight);
+                    break;
+                case 2: // cima
+                    henchList[i].x = (float)(rand() % screenWidth);
+                    henchList[i].y = -t.height;
+                    break;
+                case 3: // baixo
+                    henchList[i].x = (float)(rand() % screenWidth);
+                    henchList[i].y = screenHeight + t.height;
+                    break;
+            }
+            spaw++;
+            if (spaw == 3){break;}
         }
     }
 }
-*/
 
-// Move e desenha um único henchman
-void mov_henchman(henchman *h, Personagem_em_batalha *p) {
-    // Calcula direção
-    Vector2 dir = { p->x - h->x, p->y - h->y };
 
-    float dis_btw_h_x_p = sqrtf(dir.x * dir.x + dir.y * dir.y);
-    if (dis_btw_h_x_p > 0.01f) {
-        dir.x /= dis_btw_h_x_p;
-        dir.y /= dis_btw_h_x_p;
+
+
+#define MAX_HENCH 64
+
+void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
+    for (int i = 0; i < MAX_HENCH; i++) {
+        if (!henchList[i].active)
+            continue;
+
+        henchman *h = &henchList[i];
+
+        // Calcula direção até o player
+        Vector2 dir = { p->x - h->x, p->y - h->y };
+        float dist = sqrtf(dir.x * dir.x + dir.y * dir.y);
+
+        if (dist > 0.01f) {
+            dir.x /= dist;
+            dir.y /= dist;
+        }
+
+        // Move em direção ao player
+        h->x += dir.x * h->speed * GetFrameTime();
+        h->y += dir.y * h->speed * GetFrameTime();
+
+        // Calcula ângulo 
+        float angle = atan2f(p->y - h->y, p->x - h->x);
+
+        DrawTexturePro(
+            h->t,
+            (Rectangle){0, 0, h->t.width, h->t.height},
+            (Rectangle){h->x, h->y, h->t.width, h->t.height},
+            (Vector2){h->t.width / 2.0f, h->t.height / 2.0f},
+            angle * RAD2DEG,
+            WHITE
+        );
+        
     }
-
-    // Move
-    h->x += dir.x * h->speed;
-    h->y += dir.y * h->speed;
-
-    // Calcula ângulo
-    float angle = atan2(p->y - h->y, p->x - h->x);
-
-    // Desenha
-    DrawTexturePro(
-        h->t,
-        (Rectangle){0, 0, h->t.width, h->t.height},
-        (Rectangle){h->x, h->y, h->t.width, h->t.height},
-        (Vector2){h->t.width / 2.0f, h->t.height / 2.0f},
-        angle * RAD2DEG,
-        WHITE
-    );
 }
 
 
@@ -147,47 +155,80 @@ void update_henchmen(Personagem_em_batalha *p) {
     }
 }
 
-Projectile* spawn_projectile(Personagem_em_batalha *p, Vector2 mouse, Texture2D t) {// alterar para gerenciar para multiplos disparos
-    Projectile *proj = (Projectile*)malloc(sizeof(Projectile));
-    if(!proj) return NULL; 
+#define MAX_PROJECTILES 128
 
-    proj->x = p->x;
-    proj->y = p->y;
+void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mouse, Texture2D t) {
+    for (int i = 0; i < MAX_PROJECTILES; i++) {
+        if (!projList[i].active) {
+            projList[i].x = p->x;
+            projList[i].y = p->y;
 
-    float dx = mouse.x - p->x;
-    float dy = mouse.y - p->y;
-    float distance = sqrtf(dx*dx + dy*dy);
+            float dx = mouse.x - p->x;
+            float dy = mouse.y - p->y;
+            float distance = sqrtf(dx * dx + dy * dy);
 
-    if(distance > 0.01f){
-        proj->dx = dx / distance;
-        proj->dy = dy / distance;
-    } else {
-        proj->dx = 0;
-        proj->dy = 0;
-    }
+            if (distance > 0.01f) {
+                projList[i].dx = dx / distance;
+                projList[i].dy = dy / distance;
+            } else {
+                projList[i].dx = 0;
+                projList[i].dy = 0;
+            }
 
-    proj->speed = 10.0f;
-    proj->t = t;
-    proj->active = 1;
+            projList[i].speed = 800.0f; 
+            projList[i].t = t;
+            projList[i].active = 1;
 
-    return proj;
-}
-
-
-void mov_projectile(Projectile **proj) { //colocar a condicao de dano aq dps
-    if(*proj && (*proj)->active){
-        (*proj)->x += (*proj)->dx * (*proj)->speed;
-        (*proj)->y += (*proj)->dy * (*proj)->speed;
-
-        DrawTextureV((*proj)->t, (Vector2){(*proj)->x, (*proj)->y}, WHITE);
-
-        // Se sair da tela, libera memória
-        if((*proj)->x < 0 || (*proj)->x > 1280 || (*proj)->y < 0 || (*proj)->y > 720){
-            free(*proj);
-            *proj = NULL; // evita ponteiro pendurado
+            break; // cria apenas 1 por clique
         }
     }
 }
 
+
+void update_and_draw_projectiles(Projectile *projList, int screenWidth, int screenHeight) {
+    for (int i = 0; i < MAX_PROJECTILES; i++) {
+        if (!projList[i].active) continue;
+
+        // Move o projétil
+        projList[i].x += projList[i].dx * projList[i].speed * GetFrameTime();
+        projList[i].y += projList[i].dy * projList[i].speed * GetFrameTime();
+
+        // Desenha o projétil
+        DrawTextureV(projList[i].t, (Vector2){projList[i].x, projList[i].y}, WHITE);
+
+        // Se sair da tela, desativa
+        if (projList[i].x < -10 || projList[i].x > screenWidth + 10 ||
+            projList[i].y < -10 || projList[i].y > screenHeight + 10) 
+        {
+            projList[i].active = 0;
+        }
+    }
+}
+// colisao de projetil+henchman
+void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchList) {
+    for (int i = 0; i < MAX_PROJECTILES; i++) {
+        if (!projList[i].active) continue;
+
+        Rectangle projRect = { projList[i].x, projList[i].y, (float)projList[i].t.width, (float)projList[i].t.height };
+
+        for (int j = 0; j < MAX_HENCH; j++) {
+            if (!henchList[j].active) continue;
+
+            Rectangle henchRect = { henchList[j].x, henchList[j].y, (float)henchList[j].t.width, (float)henchList[j].t.height };
+
+            if (CheckCollisionRecs(projRect, henchRect)) {
+                // Colisão detectada
+                projList[i].active = 0;        
+                henchList[j].hp -= 1;          
+
+                if (henchList[j].hp <= 0) {    
+                    henchList[j].active = 0;             
+                }
+
+                break; 
+            }
+        }
+    }
+}
 
 
