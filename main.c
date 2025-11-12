@@ -6,6 +6,8 @@
 #include "mapa/hitbox_mapa.h"
 #include "menus/menuprincipal.h"
 #include "movimentacao/animacao.h"
+#include "battle/battles.h"
+#include "battle/battlefunctions.h"
 
 
 int main(){
@@ -21,6 +23,9 @@ int main(){
     // personagem (textura será definida pela animação; evita carregar aqui)
     Personagem p = (Personagem){792, 174, 1.5f, (Texture){0}};
     float escala = 0.05f;
+
+    Personagem_em_batalha battle_player = {640, 360, 300.0f, 100, 10, LoadTexture("img/battle/player/leste1.png")};
+
     
     // opcoes de tela
     int opcao = 0;
@@ -50,7 +55,7 @@ int main(){
             int y = (int)p.y;
             sprintf(posText, "x: %d  y: %d", x, y);
 
-            // // mostra o valor RGB do pixel sob o mouse
+            // // Se voce tirar ele como moentario, voce consegue mostrar o valor RGB do pixel sob o mouse
             // Vector2 mouse = GetMousePosition();
             // Color pixel = GetImageColor(LoadImageFromScreen(), mouse.x, mouse.y);
             // sprintf(rgb,"R:%d G:%d B:%d A:%d\n", pixel.r, pixel.g, pixel.b, pixel.a);
@@ -78,14 +83,28 @@ int main(){
             if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
                 DrawText("press space to start battle", 10, 60, 20, BLACK);
                 if (IsKeyPressed(KEY_SPACE)) {
+                    
                     DrawText("Batalha iniciada!", 10, 80, 20, BLACK);
                     opcao = 2; // Muda para a tela de batalha
                 }
             }
             EndDrawing();
-            
-
         
+        }
+        
+        if (opcao==2){
+            //tela de batalha
+            BeginDrawing();
+            ClearBackground(RAYWHITE);
+            DrawText("Batalha em andamento... Pressione M para voltar ao mapa.", 10, 10, 20, BLACK);
+            EndDrawing();
+
+            if (IsKeyPressed(KEY_M)) {
+                opcao = 1; // Volta para a tela do mapa
+            }
+
+            batalha1(&battle_player);
+
         }
     }   
 

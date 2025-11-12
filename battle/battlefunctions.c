@@ -3,39 +3,11 @@
 #include <stdlib.h>
 #include <raylib.h>
 #include <math.h>
+#include "battlefunctions.h"
 
 
-typedef struct pem{
-    float x=640;
-    float y=360
-    float speed;
-    int hp = 100;
-    int damage =10;
-    Texture t;
-}Personagem_em batalha;
-
-typedef struct h{
-    float x;
-    float y;
-    float speed;
-    int hp;
-    int damage;
-    Texture t;
-    int active;
-}henchman;
-
-typedef struct {
-    float x;
-    float y;
-    float dx;       
-    float dy;       
-    float speed;
-    Texture2D t;    
-    int active;     
-} Projectile;
 
 float angle;
-
 
 void mov_battle(Personagem_em_batalha *p)
 {
@@ -61,7 +33,7 @@ void mov_battle(Personagem_em_batalha *p)
 }
 
 
-#define MAX_HENCH 10
+#define MAX_HENCH 64
 
 void spawn_henchman_offscreen(henchman *henchList, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
     // procura um slot livre
@@ -103,8 +75,6 @@ void spawn_henchman_offscreen(henchman *henchList, Texture t, float speed, int h
 
 
 
-#define MAX_HENCH 64
-
 void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
     for (int i = 0; i < MAX_HENCH; i++) {
         if (!henchList[i].active)
@@ -142,19 +112,6 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
 
 
 // Atualiza todos os henchmen ativos
-void update_henchmen(Personagem_em_batalha *p) {
-    for (int i = 0; i < MAX_HENCHMEN; i++) {
-        if (henchmen[i].active) {
-            mov_henchman(&henchmen[i], p);
-
-            // Exemplo: desativa se morrer
-            if (henchmen[i].hp <= 0) {
-                henchmen[i].active = 0;
-            }
-        }
-    }
-}
-
 #define MAX_PROJECTILES 128
 
 void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mouse, Texture2D t) {
