@@ -110,9 +110,6 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
 }
 
 
-// Atualiza todos os henchmen ativos
-#define MAX_PROJECTILES 128
-
 void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mouse, Texture2D t) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (!projList[i].active) {

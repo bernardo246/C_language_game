@@ -93,24 +93,18 @@ int main(){
         }
         
         if (opcao==2){
-            //tela de batalha
-            BeginDrawing();
-            ClearBackground(RAYWHITE);
-            DrawText("Batalha em andamento... Pressione M para voltar ao mapa.", 10, 10, 20, BLACK);
-            EndDrawing();
+            batalha1(&battle_player);
 
             if (IsKeyPressed(KEY_M)) {
                 opcao = 1; // Volta para a tela do mapa
             }
-
-            batalha1(&battle_player);
-
         }
     }   
 
 
     // limpeza final
     descarregar_texturas();
+    UnloadTexture(battle_player.t);
     UnloadTexture(fundo);
     descarregar_menu();
     CloseWindow();

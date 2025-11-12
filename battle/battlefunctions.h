@@ -4,6 +4,8 @@
 #include <raylib.h>
 #include <math.h>
 
+#define MAX_PROJECTILES 16 // maximo de projeteis na tela
+
 typedef struct pem{
     float x;
     float y;
@@ -35,10 +37,11 @@ typedef struct {
 
 
 
-void mov_battle(Personagem_em_batalha *p);
-void spawn_henchman_offscreen(henchman *henchList, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight);
-void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mouse, Texture2D t);
-void update_and_draw_projectiles(Projectile *projList, int screenWidth, int screenHeight);
-void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p);
+void mov_battle(Personagem_em_batalha *p); // movimentaçao do personagem em batalha
+void spawn_henchman_offscreen(henchman *henchList, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight); // cria henchman fora da tela
+void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mouse, Texture2D t); // cria projétil
+void update_and_draw_projectiles(Projectile *projList, int screenWidth, int screenHeight); // atualiza e desenha projéteis
+void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p); // atualiza e desenha henchmen
+void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchList); // colisao projétil+henchman
 
 #endif
