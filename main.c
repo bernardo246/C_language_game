@@ -29,6 +29,7 @@ int main(){
     
     // opcoes de tela
     int opcao = 0;
+    int opcao_battle = 0; // batalha selecionada
    
     //lista de locais ondee vai ser iniciada a batalha
     coordenadas *hitbox_para_iniciar_batalha=NULL;
@@ -84,6 +85,15 @@ int main(){
                 DrawText("press space to start battle", 10, 60, 20, BLACK);
                 if (IsKeyPressed(KEY_SPACE)) {
                     
+                    if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1)) {
+                        opcao_battle = 1; // seleciona batalha 1
+                    }
+                    if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2)) {
+                        opcao_battle = 2; // seleciona batalha 2
+                    }
+                    if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
+                        opcao_battle = 3; // seleciona batalha 3
+                    }
                     DrawText("Batalha iniciada!", 10, 80, 20, BLACK);
                     opcao = 2; // Muda para a tela de batalha
                 }
@@ -93,7 +103,10 @@ int main(){
         }
         
         if (opcao==2){
-            batalha1(&battle_player);
+
+            if (opcao_battle == 1) {
+                batalha1(&battle_player);
+            }
 
             if (IsKeyPressed(KEY_M)) {
                 opcao = 1; // Volta para a tela do mapa

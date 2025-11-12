@@ -12,7 +12,7 @@ float angle;
 void mov_battle(Personagem_em_batalha *p)
 {
     Vector2 mouse = GetMousePosition();
-    float dt = GetFrameTime();
+    float dt = GetFrameTime(); // garante velocidade constante em FPS diferentes
 
     //ve o angulo
     float angle = atan2(mouse.y - p->y, mouse.x - p->x);
@@ -22,8 +22,8 @@ void mov_battle(Personagem_em_batalha *p)
     if (IsKeyDown(KEY_A)) p->x -= p->speed * dt;
     if (IsKeyDown(KEY_D)) p->x += p->speed * dt;
 
-    // --- Desenho do personagem rotacionado em escala reduzida ---
-    const float scale = 0.10f;
+    // Desenho do personagem rotacionado em escala reduzida 
+    const float scale = 0.10f; // fator único para encolher o sprite gigante
     Rectangle src = {0, 0, p->t.width, p->t.height};
     Rectangle dest = {p->x, p->y, p->t.width * scale, p->t.height * scale};
     Vector2 origin = {dest.width / 2.0f, dest.height / 2.0f};
