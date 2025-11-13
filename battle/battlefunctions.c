@@ -59,7 +59,7 @@ static void resolve_henchman_collisions(henchman *henchList) {
 void mov_battle(Personagem_em_batalha *p)
 {
     Vector2 mouse = GetMousePosition();
-    float dt = GetFrameTime(); // garante velocidade constante em FPS diferentes
+    float dt = GetFrameTime(); 
 
     //ve o angulo
     float angle = atan2(mouse.y - p->y, mouse.x - p->x);
@@ -70,7 +70,7 @@ void mov_battle(Personagem_em_batalha *p)
     if (IsKeyDown(KEY_D)) p->x += p->speed * dt;
 
     // Desenho do personagem rotacionado em escala reduzida 
-    const float scale = 0.10f; // fator único para encolher o sprite gigante
+    const float scale = 0.10f; 
     Rectangle src = {0, 0, p->t.width, p->t.height};
     Rectangle dest = {p->x, p->y, p->t.width * scale, p->t.height * scale};
     Vector2 origin = {dest.width / 2.0f, dest.height / 2.0f};
@@ -80,7 +80,7 @@ void mov_battle(Personagem_em_batalha *p)
 
 
 
-void spawn_henchman_offscreen(henchman *henchList, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
+void spawn_henchman_offscreen(henchman *henchList, Texture2D t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
     // procura um slot livre
     int spaw=0;
     for (int i = 0; i < MAX_HENCH; i++) {
@@ -220,14 +220,15 @@ void update_and_draw_projectiles(Projectile *projList, int screenWidth, int scre
 // colisao de projetil+henchman
 void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchList) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
+        const float henchman_scale = 0.10f;
         if (!projList[i].active) continue;
 
         Rectangle projRect = { projList[i].x, projList[i].y, (float)projList[i].t.width, (float)projList[i].t.height };
 
         for (int j = 0; j < MAX_HENCH; j++) {
             if (!henchList[j].active) continue;
-
-            Rectangle henchRect = { henchList[j].x, henchList[j].y, (float)henchList[j].t.width, (float)henchList[j].t.height };
+            
+            Rectangle henchRect = { henchList[j].x - (henchList[j].t.width * henchman_scale / 2.0f), henchList[j].y - (henchList[j].t.height * henchman_scale / 2.0f), (float)henchList[j].t.width * henchman_scale, (float)henchList[j].t.height * henchman_scale };
 
             if (CheckCollisionRecs(projRect, henchRect)) {
                 // Colisão detectada
@@ -240,6 +241,21 @@ void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchLis
 
                 break; 
             }
+        }
+    }
+}
+
+//interacao mago x capanga aqui quando o capanga atinge ele, o capanga desaparece 
+void wizard_x_henchman_collisions(Personagem_em_batalha *p, henchman *henchList) {
+    const float player_scale = 0.10f;
+    const float henchman_scale = 0.10f;
+    for (int i = 0; i < MAX_HENCH; i++) {
+        if (!henchList[i].active) continue;
+        Rectangle playerRect = { p->x - (p->t.width * player_scale / 2.0f), p->y - (p->t.height * player_scale / 2.0f), (float)p->t.width * player_scale, (float)p->t.height * player_scale };
+        Rectangle henchmanRect = { henchList[i].x - (henchList[i].t.width * henchman_scale / 2.0f), henchList[i].y - (henchList[i].t.height * henchman_scale / 2.0f), (float)henchList[i].t.width * henchman_scale, (float)henchList[i].t.height * henchman_scale };
+        if (CheckCollisionRecs(playerRect, henchmanRect)) {
+            p->hp -= henchList[i].damage;
+            henchList[i].active = 0;
         }
     }
 }

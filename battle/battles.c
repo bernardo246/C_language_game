@@ -37,7 +37,7 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
     // Isso garante que eles sejam criados apenas uma vez por batalha.
     if (!battle_initialized) {
         memset(list, 0, sizeof(henchman) * MAX_HENCH); // Limpa a lista para garantir slots vazios
-        spawn_henchman_offscreen(list, sprite_henchman, 150.0f, 6, 1, 1280, 720); // Gera capangas com velocidade maior
+        spawn_henchman_offscreen(list, sprite_henchman, 150.0f, 6, 20, 1280, 720); // Gera capangas com velocidade maior
         battle_initialized = true;
     }
 
@@ -66,6 +66,8 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
     update_and_draw_henchmen(list,player);
     //check collisions
     handle_projectile_enemy_collisions(projectiles,list);
+    wizard_x_henchman_collisions(player,list);
+
 
     EndDrawing();
 
