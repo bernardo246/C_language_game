@@ -24,8 +24,19 @@ int main(){
     Personagem p = (Personagem){792, 174, 1.5f, (Texture){0}};
     float escala = 0.05f;
 
+    //inside the battle
     Personagem_em_batalha battle_player = {640, 360, 300.0f, 100, 10, LoadTexture("img/battle/player/leste1.png")};
-
+    henchman henchList[MAX_HENCH]; // Usa a constante MAX_HENCH para o tamanho
+    memset(henchList, 0, sizeof(henchList)); // Zera a lista para garantir que 'active' seja 0
+    
+    
+    //////////////////
+        //MUDAR//
+    //////////////////
+    Texture2D capanga_textura = LoadTexture("img/battle/player/leste1.png");// TEM QUE MUDAR PELA TEXTURA DO CAPAMGA
+    // TEM QUE SUBSTITUIR ESSE TRECHO PARA O LOADTEXTURE DA TEEXTURA DO FUNDO DA BATALHA
+    Image img = GenImageColor(1280, 720, BLACK);
+    Texture2D backgroud_sprite = LoadTextureFromImage(img); 
     
     // opcoes de tela
     int opcao = 0;
@@ -105,7 +116,7 @@ int main(){
         if (opcao==2){
 
             if (opcao_battle == 1) {
-                batalha1(&battle_player);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura);
             }
 
             if (IsKeyPressed(KEY_M)) {

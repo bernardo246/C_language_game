@@ -6,7 +6,6 @@
 #include "battlefunctions.h"
 
 
-
 float angle;
 
 void mov_battle(Personagem_em_batalha *p)
@@ -32,7 +31,6 @@ void mov_battle(Personagem_em_batalha *p)
 }
 
 
-#define MAX_HENCH 64
 
 void spawn_henchman_offscreen(henchman *henchList, Texture t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
     // procura um slot livre
@@ -97,11 +95,17 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
         // Calcula ângulo 
         float angle = atan2f(p->y - h->y, p->x - h->x);
 
+        // Define a escala para o capanga
+        const float scale = 0.10f;
+        Rectangle src = {0, 0, h->t.width, h->t.height};
+        Rectangle dest = {h->x, h->y, h->t.width * scale, h->t.height * scale};
+        Vector2 origin = {dest.width / 2.0f, dest.height / 2.0f};
+
         DrawTexturePro(
             h->t,
-            (Rectangle){0, 0, h->t.width, h->t.height},
-            (Rectangle){h->x, h->y, h->t.width, h->t.height},
-            (Vector2){h->t.width / 2.0f, h->t.height / 2.0f},
+            src,
+            dest,
+            origin,
             angle * RAD2DEG,
             WHITE
         );
@@ -183,5 +187,3 @@ void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchLis
         }
     }
 }
-
-

@@ -4,8 +4,8 @@
 #include <raylib.h>
 #include <math.h>
 
-#define MAX_PROJECTILES 16 // maximo de projeteis na tela
-
+#define MAX_PROJECTILES 16 
+#define MAX_HENCH 64 
 typedef struct pem{
     float x;
     float y;

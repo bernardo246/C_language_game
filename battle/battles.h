@@ -4,6 +4,5 @@
 #include <raylib.h>
 #include <math.h>
 #include "./battlefunctions.h"
-
-void batalha1(Personagem_em_batalha *player);
+void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture2D sprite_henchman);
 #endif
