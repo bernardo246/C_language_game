@@ -74,6 +74,12 @@ void mov_battle(Personagem_em_batalha *p)
     Rectangle src = {0, 0, p->t.width, p->t.height};
     Rectangle dest = {p->x, p->y, p->t.width * scale, p->t.height * scale};
     Vector2 origin = {dest.width / 2.0f, dest.height / 2.0f};
+    //garantir que o mago n saia da tela
+    if(p->x<0)p->x=0;
+    if(p->y<0)p->y=0;
+    if(p->x>1280)p->x=1280;
+    if(p->y>720)p->y=720;
+
 
     DrawTexturePro(p->t, src, dest, origin, angle * RAD2DEG, WHITE);
 }
@@ -93,22 +99,25 @@ void spawn_henchman_offscreen(henchman *henchList, Texture2D t, float speed, int
 
             int side = rand() % 4;
 
+            // Usa a largura e altura escalonadas para posicionar o capanga um pouco fora da tela.
+            float scaledWidth = t.width * HENCHMAN_SCALE;
+            float scaledHeight = t.height * HENCHMAN_SCALE;
             switch (side) {
                 case 0: // esquerda
-                    henchList[i].x = -t.width;
+                    henchList[i].x = -scaledWidth;
                     henchList[i].y = (float)(rand() % screenHeight);
                     break;
                 case 1: // direita
-                    henchList[i].x = screenWidth + t.width;
+                    henchList[i].x = screenWidth + scaledWidth;
                     henchList[i].y = (float)(rand() % screenHeight);
                     break;
                 case 2: // cima
                     henchList[i].x = (float)(rand() % screenWidth);
-                    henchList[i].y = -t.height;
+                    henchList[i].y = -scaledHeight;
                     break;
                 case 3: // baixo
                     henchList[i].x = (float)(rand() % screenWidth);
-                    henchList[i].y = screenHeight + t.height;
+                    henchList[i].y = screenHeight + scaledHeight;
                     break;
             }
             spaw++;

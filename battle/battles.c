@@ -61,12 +61,13 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
         spawn_projectile(projectiles, player, mouse, projectileTexture);
     }
 
-    // Atualiza e desenha todos os projéteis ativos do pool.
+    // 1. Atualiza posições e desenha tudo
     update_and_draw_projectiles(projectiles, GetScreenWidth(), GetScreenHeight());
     update_and_draw_henchmen(list,player);
-    //check collisions
-    handle_projectile_enemy_collisions(projectiles,list);
+
+    // 2. Resolve todas as colisões após as atualizações de movimento
     wizard_x_henchman_collisions(player,list);
+    handle_projectile_enemy_collisions(projectiles,list);
 
 
     EndDrawing();
