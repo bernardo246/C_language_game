@@ -18,7 +18,7 @@ static float get_henchman_radius(const henchman *h) {
 }
 
 
-// Resolve colisoes entre capangas para evitar sobreposicao visivel
+
 static void resolve_henchman_collisions(henchman *henchList) {
     for (int i = 0; i < MAX_HENCH; i++) {
         if (!henchList[i].active) continue;
@@ -88,7 +88,6 @@ void mov_battle(Personagem_em_batalha *p)
 
 void spawn_henchman_offscreen(henchman *henchList, Texture2D t, float speed, int hp, int damage, int screenWidth, int screenHeight) {
     // procura um slot livre
-    int spaw=0;
     for (int i = 0; i < MAX_HENCH; i++) {
         if (!henchList[i].active) {
             henchList[i].t = t;
@@ -120,8 +119,7 @@ void spawn_henchman_offscreen(henchman *henchList, Texture2D t, float speed, int
                     henchList[i].y = screenHeight + scaledHeight;
                     break;
             }
-            spaw++;
-            if (spaw == 3){break;}
+            break; 
         }
     }
 }
@@ -201,21 +199,73 @@ void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mo
             projList[i].t = t;
             projList[i].active = 1;
 
-            break; // cria apenas 1 por clique
+            break; 
+        }
+    }
+}
+// wave system
+void init_wave_manager(WaveManager *waveManager) {
+    waveManager->wave = 1;
+    waveManager->enemiesToSpawn = 3; 
+    waveManager->spawnRate = 1.5f;   
+    waveManager->spawnTimer = 0.0f;
+    waveManager->activeEnemies = 0;
+}
+
+int count_active_henchmen(henchman *henchList) {
+    int count = 0;
+    for (int i = 0; i < MAX_HENCH; i++) {
+        if (henchList[i].active) {
+            count++;
+        }
+    }
+    return count;
+}
+
+void update_wave(WaveManager *waveManager, henchman *henchList, Texture2D sprite_henchman, int screenWidth, int screenHeight, Personagem_em_batalha *p) {
+    waveManager->activeEnemies = count_active_henchmen(henchList);
+
+    // Se todos os inimigos da horda foram derrotados e não há mais para surgir, avança para a próxima horda
+    if (waveManager->activeEnemies == 0 && waveManager->enemiesToSpawn == 0) {
+        waveManager->wave++;
+        waveManager->spawnTimer = 0; 
+
+        if (waveManager->wave == 2) {
+            waveManager->enemiesToSpawn = 5; 
+            waveManager->spawnRate = 1.0f;   
+        } else if (waveManager->wave == 3) {
+            waveManager->enemiesToSpawn = 1;  
+            waveManager->spawnRate = 0.5f;//                          BOSS
+            
+        } else {
+            p->hp=100;
+            p->x=360;
+            p->y=360;
+
+            return;
+        }
+    }
+
+    //criar inimigos com base no tempo
+    if (waveManager->enemiesToSpawn > 0) {
+        waveManager->spawnTimer += GetFrameTime();
+        if (waveManager->spawnTimer >= waveManager->spawnRate) {
+            waveManager->spawnTimer = 0;
+            spawn_henchman_offscreen(henchList, sprite_henchman, 150.0f, 6, 10, screenWidth, screenHeight);
+            waveManager->enemiesToSpawn--;
         }
     }
 }
 
-
+//update projectile
 void update_and_draw_projectiles(Projectile *projList, int screenWidth, int screenHeight) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (!projList[i].active) continue;
 
-        // Move o projétil
+        // Move o projétil pela hip
         projList[i].x += projList[i].dx * projList[i].speed * GetFrameTime();
         projList[i].y += projList[i].dy * projList[i].speed * GetFrameTime();
 
-        // Desenha o projétil
         DrawTextureV(projList[i].t, (Vector2){projList[i].x, projList[i].y}, WHITE);
 
         // Se sair da tela, desativa
@@ -242,7 +292,7 @@ void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchLis
             if (CheckCollisionRecs(projRect, henchRect)) {
                 // Colisão detectada
                 projList[i].active = 0;        
-                henchList[j].hp -= 1;          
+                henchList[j].hp -= 2;          
 
                 if (henchList[j].hp <= 0) {    
                     henchList[j].active = 0;             
@@ -265,6 +315,62 @@ void wizard_x_henchman_collisions(Personagem_em_batalha *p, henchman *henchList)
         if (CheckCollisionRecs(playerRect, henchmanRect)) {
             p->hp -= henchList[i].damage;
             henchList[i].active = 0;
+        }
+    }
+}
+
+// boss manager
+
+void boss_movement(Personagem_em_batalha *p){
+    int direcao=rand()%2;
+    if(direcao == 1){
+        p->y += p->speed * GetFrameTime();
+    }else{
+        p->y -= p->speed * GetFrameTime();
+    }
+    DrawTexture(p->t,p->x,p->y,WHITE);
+
+}
+
+void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList){
+    for (int i = 0; i < MAX_PROJECTILES; i++) {
+        if (!projList[i].active) continue;
+        Rectangle projRect = { projList[i].x, projList[i].y, (float)projList[i].t.width, (float)projList[i].t.height };
+        Rectangle bossRect = { p->x - (p->t.width * henchman_scale / 2.0f), p->y - (p->t.height * henchman_scale / 2.0f), (float)p->t.width * henchman_scale, (float)p->t.height * henchman_scale };
+
+        if (CheckCollisionRecs(projRect, bossRect)) {
+            projList[i].active = 0;        
+            p->hp -= 5;          
+            if (p->hp <= 0) {    
+                p->active = 0;             
+            }
+            break; 
+        }
+    }
+}
+    
+void spawn_projectile_boss(Projectile *projList, Personagem_em_batalha *p,Personagem_em_batalha *boss, Texture2D t) {
+    for (int i = 0; i < MAX_PROJECTILES; i++) {
+        if (!projList[i].active) {
+            projList[i].x = boss->x;
+            projList[i].y = boss->y;
+
+            float dx = boss->x - p->x;
+            float dy = boss->y - p->y;
+            float distance = sqrtf(dx * dx + dy * dy);
+
+            if (distance > 0.01f) {
+                projList[i].dx = dx / distance;
+                projList[i].dy = dy / distance;
+            } else {
+                projList[i].dx = 0;
+                projList[i].dy = 0;
+            }
+
+            projList[i].speed = 600.0f; 
+            projList[i].t = t;
+            projList[i].active = 1;
+            break; 
         }
     }
 }

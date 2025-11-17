@@ -13,8 +13,8 @@
 int main(){
     const int screenX = 1280;
     const int screenY = 720;
-    InitWindow(screenX,screenY,"magic battle"); // inicializando janela
-    SetTargetFPS(60); // fps
+    InitWindow(screenX,screenY,"magic battle");
+    SetTargetFPS(60); 
     
     //mapa
     int mapa[Map_y][Map_x];
@@ -26,14 +26,13 @@ int main(){
 
     //inside the battle
     Personagem_em_batalha battle_player = {640, 360, 300.0f, 100, 10, LoadTexture("img/battle/player/leste1.png")};
-    henchman henchList[MAX_HENCH]; // Usa a constante MAX_HENCH para o tamanho
+    Personagem_em_batalha boss = {1024, 360, 200.0f, 100, 10, LoadTexture("img/battle/monstros/monstro_fogo/mf1.png")};
+    
+    henchman henchList[MAX_HENCH]; 
     memset(henchList, 0, sizeof(henchList)); // Zera a lista para garantir que 'active' seja 0
     
     
-    //////////////////
-        //MUDAR//
-    //////////////////
-    Texture2D capanga_textura = LoadTexture("img/battle/player/leste1.png");// TEM QUE MUDAR PELA TEXTURA DO CAPAMGA
+    Texture2D capanga_textura = LoadTexture("img/battle/monstros/monstro_pedra/mp1.png");
     // TEM QUE SUBSTITUIR ESSE TRECHO PARA O LOADTEXTURE DA TEEXTURA DO FUNDO DA BATALHA
     Image img = GenImageColor(1280, 720, BLACK);
     Texture2D backgroud_sprite = LoadTextureFromImage(img); 
@@ -82,32 +81,31 @@ int main(){
                 if (IsKeyPressed(KEY_SPACE)) {
                     
                     if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1)) {
-                        opcao_battle = 1; // seleciona batalha 1
+                        opcao_battle = 1; 
                     }
                     if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2)) {
-                        opcao_battle = 2; // seleciona batalha 2
+                        opcao_battle = 2; 
                     }
                     if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
-                        opcao_battle = 3; // seleciona batalha 3
+                        opcao_battle = 3; 
                     }
                     DrawText("Batalha iniciada!", 10, 80, 20, BLACK);
                     opcao = 2; // Muda para a tela de batalha
                 }
             }
             EndDrawing();
-        
         }
         
         if (opcao==2){
 
             if (opcao_battle == 1) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss);
             }
             if (opcao_battle == 2) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss);
             }
             if (opcao_battle == 3) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss);
             }
             if (IsKeyPressed(KEY_M)) {
                 opcao = 1; // Volta para a tela do mapa
@@ -125,21 +123,3 @@ int main(){
     return 0;
     
 }
-
-//funcao para escrever algo na tela :
-//BeginDrawing()
-//
-//nesse meio eu coloco a funcao com o formato da escrita e seus parametros ex:
-// DrawText(texto,posicao x, posicao y, tamanho da fonte, cor)
-//
-//EndDrawing()
-
-
-//carregar img:
-//Texture nome da variave =x;
-//x = LoadTexture(caminho para img)
-//funcao para dar o diplay da img na tela = DrawTexture(x, posicao x, posicao y, cor)
-
-// add fundo do jogo: tem que ser carregado antes de tudo
-//vai dar um loadtexture()
-//drawtexture(variavel, 0, 0,white)
