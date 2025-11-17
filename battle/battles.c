@@ -32,12 +32,11 @@ static void init_projectile_resources(void) {
 
 void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture2D sprite_henchman) {
     static bool battle_initialized = false;
-
     
     // Isso garante que eles sejam criados apenas uma vez por batalha.
     if (!battle_initialized) {
         memset(list, 0, sizeof(henchman) * MAX_HENCH); // Limpa a lista para garantir slots vazios
-        spawn_henchman_offscreen(list, sprite_henchman, 150.0f, 6, 20, 1280, 720); // Gera capangas com velocidade maior
+        spawn_henchman_offscreen(list, sprite_henchman, 150.0f, 6, 10, 1280, 720); // Gera capangas com velocidade maior
         battle_initialized = true;
     }
 
@@ -51,8 +50,6 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
 
     DrawText("Batalha em andamento... Pressione M para voltar ao mapa.", 10, 10, 20, RAYWHITE);
     DrawText("Clique com o botao esquerdo para atirar.", 10, 40, 20, RAYWHITE);
-
-    
     mov_battle(player);
 
     
@@ -68,7 +65,7 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
     // 2. Resolve todas as colisões após as atualizações de movimento
     wizard_x_henchman_collisions(player,list);
     handle_projectile_enemy_collisions(projectiles,list);
-
+    DrawRectangle(10,70,player->hp,10,GREEN);
 
     EndDrawing();
 
