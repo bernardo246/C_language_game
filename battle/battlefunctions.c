@@ -341,7 +341,7 @@ void boss_movement(Personagem_em_batalha *p,int *direcao){
     };
 }
 
-void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList){
+void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList,int damage){
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (!projList[i].active) continue;
         Rectangle projRect = { projList[i].x, projList[i].y, (float)projList[i].t.width, (float)projList[i].t.height };
@@ -349,7 +349,7 @@ void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList){
 
         if (CheckCollisionRecs(projRect, bossRect)) {
             projList[i].active = 0;        
-            p->hp -= 5;          
+            p->hp -= damage;          
             if (p->hp <= 0) {    
                 p->active = 0;             
             }
@@ -364,8 +364,8 @@ void spawn_projectile_boss(Projectile *projList, Personagem_em_batalha *p,Person
             projList[i].x = boss->x;
             projList[i].y = boss->y;
 
-            float dx = boss->x - p->x;
-            float dy = boss->y - p->y;
+            float dx = p->x - boss->x;
+            float dy = p->y - boss->y; 
             float distance = sqrtf(dx * dx + dy * dy);
 
             if (distance > 0.01f) {

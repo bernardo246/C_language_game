@@ -57,6 +57,7 @@ void init_wave_manager(WaveManager *waveManager);
 void update_wave(WaveManager *waveManager, henchman *henchList, Texture2D sprite_henchman, int screenWidth, int screenHeight,Personagem_em_batalha *p,Personagem_em_batalha *boss);
 int count_active_henchmen(henchman *henchList);
 void boss_movement(Personagem_em_batalha *p, int *direcao);
-void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList);
+void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList,int damage);
+void spawn_projectile_boss(Projectile *projList, Personagem_em_batalha *p,Personagem_em_batalha *boss, Texture2D t);
 
 #endif

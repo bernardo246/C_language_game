@@ -32,12 +32,21 @@ int main(){
     
     henchman henchList[MAX_HENCH]; 
     memset(henchList, 0, sizeof(henchList)); // Zera a lista para garantir que 'active' seja 0
+
     
     
     Texture2D capanga_textura = LoadTexture("img/battle/monstros/monstro_pedra/mp1.png");
     // TEM QUE SUBSTITUIR ESSE TRECHO PARA O LOADTEXTURE DA TEEXTURA DO FUNDO DA BATALHA
     Image img = GenImageColor(1280, 720, BLACK);
-    Texture2D backgroud_sprite = LoadTextureFromImage(img); 
+    Texture2D backgroud_sprite = LoadTextureFromImage(img);
+    
+    // Carrega a imagem do projétil do chefe, cria a textura e descarrega a imagem.
+    Image boss_projectile_img = LoadImage("img/battle/projeteis/mago_pedra/p1.png");
+    ImageResize(&boss_projectile_img, 100, 100); // Redimensiona a imagem do projétil do chefe
+    Texture2D boss_projectile_texture = LoadTextureFromImage(boss_projectile_img);
+    UnloadImage(boss_projectile_img); // A imagem não é mais necessária após criar a textura
+    
+    
     
     // opcoes de tela
     int opcao = 0;
@@ -101,13 +110,13 @@ int main(){
         if (opcao==2){
 
             if (opcao_battle == 1) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao, boss_projectile_texture);
             }
             if (opcao_battle == 2) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao, boss_projectile_texture);
             }
             if (opcao_battle == 3) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao, boss_projectile_texture);
             }
             if (IsKeyPressed(KEY_M)) {
                 opcao = 1; // Volta para a tela do mapa
@@ -118,6 +127,7 @@ int main(){
 
     // limpeza final
     descarregar_texturas();
+    UnloadTexture(boss_projectile_texture);
     UnloadTexture(battle_player.t);
     UnloadTexture(fundo);
     descarregar_menu();
