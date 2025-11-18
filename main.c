@@ -10,6 +10,8 @@
 #include "battle/battlefunctions.h"
 
 
+int direcao = 1;
+
 int main(){
     const int screenX = 1280;
     const int screenY = 720;
@@ -25,8 +27,8 @@ int main(){
     float escala = 0.05f;
 
     //inside the battle
-    Personagem_em_batalha battle_player = {640, 360, 300.0f, 100, 10, LoadTexture("img/battle/player/leste1.png")};
-    Personagem_em_batalha boss = {1024, 360, 200.0f, 100, 10, LoadTexture("img/battle/monstros/monstro_fogo/mf1.png")};
+    Personagem_em_batalha battle_player = {640, 360, 300.0f, 100, 10, 1, LoadTexture("img/battle/player/leste1.png")};
+    Personagem_em_batalha boss = {1024, 360, 200.0f, 100, 10, 0, LoadTexture("img/battle/monstros/monstro_fogo/mf1.png")};
     
     henchman henchList[MAX_HENCH]; 
     memset(henchList, 0, sizeof(henchList)); // Zera a lista para garantir que 'active' seja 0
@@ -99,13 +101,13 @@ int main(){
         if (opcao==2){
 
             if (opcao_battle == 1) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao);
             }
             if (opcao_battle == 2) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao);
             }
             if (opcao_battle == 3) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss);
+                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao);
             }
             if (IsKeyPressed(KEY_M)) {
                 opcao = 1; // Volta para a tela do mapa

@@ -12,6 +12,7 @@ typedef struct pem{
     float speed;
     int hp;
     int damage;
+    int active;
     Texture2D t;
 }Personagem_em_batalha;
 
@@ -53,9 +54,9 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p); //
 void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchList); // colisao projétil+henchman
 void wizard_x_henchman_collisions(Personagem_em_batalha *p, henchman *henchList); // colisao personagem+henchman
 void init_wave_manager(WaveManager *waveManager);
-void update_wave(WaveManager *waveManager, henchman *henchList, Texture2D sprite_henchman, int screenWidth, int screenHeight,Personagem_em_batalha *p);
+void update_wave(WaveManager *waveManager, henchman *henchList, Texture2D sprite_henchman, int screenWidth, int screenHeight,Personagem_em_batalha *p,Personagem_em_batalha *boss);
 int count_active_henchmen(henchman *henchList);
-void boss_movement(Personagem_em_batalha *p);
+void boss_movement(Personagem_em_batalha *p, int *direcao);
 void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList);
 
 #endif

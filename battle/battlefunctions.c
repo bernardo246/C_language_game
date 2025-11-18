@@ -222,31 +222,34 @@ int count_active_henchmen(henchman *henchList) {
     return count;
 }
 
-void update_wave(WaveManager *waveManager, henchman *henchList, Texture2D sprite_henchman, int screenWidth, int screenHeight, Personagem_em_batalha *p) {
+void update_wave(WaveManager *waveManager, henchman *henchList, Texture2D sprite_henchman, int screenWidth, int screenHeight, Personagem_em_batalha *p,Personagem_em_batalha *boss) {
     waveManager->activeEnemies = count_active_henchmen(henchList);
+
+    
+    if (waveManager->wave == 3) {
+        if (!boss->active) {
+            waveManager->wave++; 
+            p->hp = 100;
+            p->x = 256; 
+            p->y = 360;
+            // Aqui você pode adicionar uma lógica para voltar ao mapa ou mostrar uma tela de vitória.
+        }
+        return;
+    }
 
     // Se todos os inimigos da horda foram derrotados e não há mais para surgir, avança para a próxima horda
     if (waveManager->activeEnemies == 0 && waveManager->enemiesToSpawn == 0) {
         waveManager->wave++;
         waveManager->spawnTimer = 0; 
 
+        
         if (waveManager->wave == 2) {
-            waveManager->enemiesToSpawn = 5; 
-            waveManager->spawnRate = 1.0f;   
-        } else if (waveManager->wave == 3) {
-            waveManager->enemiesToSpawn = 1;  
-            waveManager->spawnRate = 0.5f;//                          BOSS
-            
-        } else {
-            p->hp=100;
-            p->x=360;
-            p->y=360;
-
-            return;
+            waveManager->enemiesToSpawn = 7;
+            waveManager->spawnRate = 1.0f;
         }
     }
-
-    //criar inimigos com base no tempo
+    
+    //logica de spawn
     if (waveManager->enemiesToSpawn > 0) {
         waveManager->spawnTimer += GetFrameTime();
         if (waveManager->spawnTimer >= waveManager->spawnRate) {
@@ -321,22 +324,28 @@ void wizard_x_henchman_collisions(Personagem_em_batalha *p, henchman *henchList)
 
 // boss manager
 
-void boss_movement(Personagem_em_batalha *p){
-    int direcao=rand()%2;
-    if(direcao == 1){
+void boss_movement(Personagem_em_batalha *p,int *direcao){
+    if(*direcao == 1){
         p->y += p->speed * GetFrameTime();
     }else{
         p->y -= p->speed * GetFrameTime();
     }
     DrawTexture(p->t,p->x,p->y,WHITE);
-
+    if(p->y<0){
+        p->y=0;
+        *direcao=1;
+    }
+    if(p->y>720){
+        p->y=720;
+        *direcao=0;
+    };
 }
 
 void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList){
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (!projList[i].active) continue;
         Rectangle projRect = { projList[i].x, projList[i].y, (float)projList[i].t.width, (float)projList[i].t.height };
-        Rectangle bossRect = { p->x - (p->t.width * henchman_scale / 2.0f), p->y - (p->t.height * henchman_scale / 2.0f), (float)p->t.width * henchman_scale, (float)p->t.height * henchman_scale };
+        Rectangle bossRect = { p->x - (p->t.width * HENCHMAN_SCALE / 2.0f), p->y - (p->t.height * HENCHMAN_SCALE / 2.0f), (float)p->t.width * HENCHMAN_SCALE, (float)p->t.height * HENCHMAN_SCALE };
 
         if (CheckCollisionRecs(projRect, bossRect)) {
             projList[i].active = 0;        
