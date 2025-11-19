@@ -88,6 +88,11 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleA
     if (IsKeyPressed(KEY_M)) {
         battle_initialized = false;
     }
+
+    // Se o jogador morrer, também reseta o estado da batalha.
+    if (player->hp <= 0) {
+        battle_initialized = false;
+    }
 }
 
 

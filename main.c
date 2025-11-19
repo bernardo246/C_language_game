@@ -114,7 +114,7 @@ int main(){
             if (opcao_battle == 3) {
                 batalha(&battle_player,backgroud_sprite,henchList,henchman_anim,&boss, &direcao);
             }
-            if (IsKeyPressed(KEY_M)) {
+            if (IsKeyPressed(KEY_M) || battle_player.hp <= 0) {
                 opcao = 1; // Volta para a tela do mapa
             }
         }
