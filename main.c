@@ -27,24 +27,20 @@ int main(){
     float escala = 0.05f;
 
     //inside the battle
-    Personagem_em_batalha battle_player = {640, 360, 300.0f, 100, 10, 1, LoadTexture("img/battle/player/leste1.png")};
-    Personagem_em_batalha boss = {1024, 360, 200.0f, 100, 10, 0, LoadTexture("img/battle/monstros/monstro_fogo/mf1.png")};
+    // Animacoes usadas dentro da batalha para player, boss e capangas (obtidas do gerenciador).
+    BattleAnimation *player_battle_anim = obter_battle_animation(BATTLE_ANIM_PLAYER_MAGO);
+    Personagem_em_batalha battle_player = {640, 360, 300.0f, 100, 10, 1, player_battle_anim};
+    BattleAnimation *boss_anim = obter_battle_animation(BATTLE_ANIM_BOSS_MONSTRO_FOGO);
+    Personagem_em_batalha boss = {1024, 360, 200.0f, 100, 10, 0, boss_anim};
     
     henchman henchList[MAX_HENCH]; 
     memset(henchList, 0, sizeof(henchList)); // Zera a lista para garantir que 'active' seja 0
 
-    
-    
-    Texture2D capanga_textura = LoadTexture("img/battle/monstros/monstro_pedra/mp1.png");
+    BattleAnimation *henchman_anim = obter_battle_animation(BATTLE_ANIM_HENCH_MONSTRO_PEDRA);
     // TEM QUE SUBSTITUIR ESSE TRECHO PARA O LOADTEXTURE DA TEEXTURA DO FUNDO DA BATALHA
     Image img = GenImageColor(1280, 720, BLACK);
     Texture2D backgroud_sprite = LoadTextureFromImage(img);
-    
-    // Carrega a imagem do projétil do chefe, cria a textura e descarrega a imagem.
-    Image boss_projectile_img = LoadImage("img/battle/projeteis/mago_pedra/p1.png");
-    ImageResize(&boss_projectile_img, 100, 100); // Redimensiona a imagem do projétil do chefe
-    Texture2D boss_projectile_texture = LoadTextureFromImage(boss_projectile_img);
-    UnloadImage(boss_projectile_img); // A imagem não é mais necessária após criar a textura
+    UnloadImage(img);
     
     
     
@@ -110,13 +106,13 @@ int main(){
         if (opcao==2){
 
             if (opcao_battle == 1) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao, boss_projectile_texture);
+                batalha(&battle_player,backgroud_sprite,henchList,henchman_anim,&boss, &direcao);
             }
             if (opcao_battle == 2) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao, boss_projectile_texture);
+                batalha(&battle_player,backgroud_sprite,henchList,henchman_anim,&boss, &direcao);
             }
             if (opcao_battle == 3) {
-                batalha(&battle_player,backgroud_sprite,henchList,capanga_textura,&boss, &direcao, boss_projectile_texture);
+                batalha(&battle_player,backgroud_sprite,henchList,henchman_anim,&boss, &direcao);
             }
             if (IsKeyPressed(KEY_M)) {
                 opcao = 1; // Volta para a tela do mapa
@@ -127,11 +123,13 @@ int main(){
 
     // limpeza final
     descarregar_texturas();
-    UnloadTexture(boss_projectile_texture);
-    UnloadTexture(battle_player.t);
+    // descarrega todas as animacoes de batalha compartilhadas.
+    descarregar_animacoes_batalha();
     UnloadTexture(fundo);
     descarregar_menu();
     CloseWindow();
     return 0;
     
 }
+
+

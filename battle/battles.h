@@ -4,5 +4,6 @@
 #include <raylib.h>
 #include <math.h>
 #include "./battlefunctions.h"
-void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture2D sprite_henchman,Personagem_em_batalha *boss, int *direcao,Texture2D boss_texture_projectile);
+// Executa a batalha completa ate o jogador sair ou vencer.
+void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleAnimation *henchman_anim,Personagem_em_batalha *boss, int *direcao);
 #endif

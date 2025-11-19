@@ -9,32 +9,20 @@
 #include "./battles.h"
 #include<stdio.h>
 
-#define HENCHMAN_SCALE 0.10f
 
 
+// Pools de projeteis do jogador e do chefe para reutilizacao.
 static Projectile projectiles[MAX_PROJECTILES];
 static Projectile boss_projectiles[MAX_PROJECTILES];
 
-// Textura e estado de inicialização apenas para o projétil do JOGADOR
-static Texture2D player_projectile_texture = {0};
-static bool player_projectile_initialized = false;
+// Loop principal de uma batalha completa (UI, entradas e atualizacoes).
 
-// Carrega a textura do projétil do jogador, apenas uma vez.
-static void init_player_projectile_texture(void) {
-    if (player_projectile_initialized) return;
-
-    Image bulletImage = LoadImage("img/battle/projeteis/mago_principal/p1.png");
-    ImageResize(&bulletImage, 100, 100);
-    player_projectile_texture = LoadTextureFromImage(bulletImage);
-    UnloadImage(bulletImage);
-
-    player_projectile_initialized = true;
-}
-
-void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture2D sprite_henchman,Personagem_em_batalha *boss, int *direcao,Texture2D boss_texture_projectile) {
+void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleAnimation *henchman_anim,Personagem_em_batalha *boss, int *direcao) {
     static bool battle_initialized = false;
     static WaveManager waveManager;
     static float bossAttackTimer = 2.0f; // Chefe ataca a cada 2 segundos
+    BattleAnimation *player_projectile_anim = obter_battle_animation(BATTLE_ANIM_PROJECTILE_PLAYER);
+    BattleAnimation *boss_projectile_anim = obter_battle_animation(BATTLE_ANIM_PROJECTILE_BOSS);
     
     // Isso garante que eles sejam criados apenas uma vez por batalha.
     if (!battle_initialized) {
@@ -45,7 +33,6 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
         battle_initialized = true;
     }
 
-    init_player_projectile_texture(); 
     
     BeginDrawing();
 
@@ -65,13 +52,13 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
     if (boss->active) {
         bossAttackTimer -= GetFrameTime();
         if (bossAttackTimer <= 0) {
-            spawn_projectile_boss(boss_projectiles, player, boss, boss_texture_projectile);
+            spawn_projectile_boss(boss_projectiles, player, boss, boss_projectile_anim);
             bossAttackTimer = 2.0f; 
         }
     }
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mouse = GetMousePosition();
-        spawn_projectile(projectiles, player, mouse, player_projectile_texture);
+        spawn_projectile(projectiles, player, mouse, player_projectile_anim);
     }
  
     if (waveManager.wave >= 3 && !boss->active) {
@@ -79,7 +66,7 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
     }
 
     // 1. Atualiza posições e desenha tudo
-    update_wave(&waveManager, list, sprite_henchman, GetScreenWidth(), GetScreenHeight(),player,boss);
+    update_wave(&waveManager, list, henchman_anim, GetScreenWidth(), GetScreenHeight(),player,boss);
     update_and_draw_projectiles(projectiles, GetScreenWidth(), GetScreenHeight());
     update_and_draw_henchmen(list,player);
     if (boss->active) update_and_draw_projectiles(boss_projectiles, GetScreenWidth(), GetScreenHeight());
@@ -102,3 +89,6 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Texture
         battle_initialized = false;
     }
 }
+
+
+
