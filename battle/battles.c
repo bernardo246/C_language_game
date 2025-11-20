@@ -14,24 +14,25 @@
 // Pools de projeteis do jogador e do chefe para reutilizacao.
 static Projectile projectiles[MAX_PROJECTILES];
 static Projectile boss_projectiles[MAX_PROJECTILES];
+static WaveManager waveManager;
+static float bossAttackTimer = 2.0f; // Chefe ataca a cada 2 segundos
+
+// Reinicia o estado completo da batalha para um novo começo.
+void reiniciar_batalha(henchman *list, Personagem_em_batalha *player, Personagem_em_batalha *boss) {
+    memset(list, 0, sizeof(henchman) * MAX_HENCH);
+    memset(projectiles, 0, sizeof(projectiles));
+    memset(boss_projectiles, 0, sizeof(boss_projectiles));
+    init_wave_manager(&waveManager);
+
+    player->hp = 100;
+    boss->hp = 100;
+    boss->active = 0; // Garante que o boss comece inativo.
+}
 
 // Loop principal de uma batalha completa (UI, entradas e atualizacoes).
-
 void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleAnimation *henchman_anim,Personagem_em_batalha *boss, int *direcao) {
-    static bool battle_initialized = false;
-    static WaveManager waveManager;
-    static float bossAttackTimer = 2.0f; // Chefe ataca a cada 2 segundos
     BattleAnimation *player_projectile_anim = obter_battle_animation(BATTLE_ANIM_PROJECTILE_PLAYER);
     BattleAnimation *boss_projectile_anim = obter_battle_animation(BATTLE_ANIM_PROJECTILE_BOSS);
-    
-    // Isso garante que eles sejam criados apenas uma vez por batalha.
-    if (!battle_initialized) {
-        memset(list, 0, sizeof(henchman) * MAX_HENCH); 
-        memset(projectiles, 0, sizeof(projectiles)); 
-        memset(boss_projectiles, 0, sizeof(boss_projectiles)); 
-        init_wave_manager(&waveManager);
-        battle_initialized = true;
-    }
 
     
     BeginDrawing();
@@ -84,16 +85,4 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleA
 
     EndDrawing();
 
-    // Se o jogador sair da batalha (pressionando M), resetamos o estado para a próxima batalha.
-    if (IsKeyPressed(KEY_M)) {
-        battle_initialized = false;
-    }
-
-    // Se o jogador morrer, também reseta o estado da batalha.
-    if (player->hp <= 0) {
-        battle_initialized = false;
-    }
 }
-
-
-

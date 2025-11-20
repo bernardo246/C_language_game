@@ -86,7 +86,7 @@ int main(){
             if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
                 DrawText("press space to start battle", 10, 60, 20, BLACK);
                 if (IsKeyPressed(KEY_SPACE)) {
-                    
+                    reiniciar_batalha(henchList, &battle_player, &boss); // Reinicia todo o estado da batalha
                     if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1)) {
                         opcao_battle = 1; 
                     }
@@ -131,5 +131,3 @@ int main(){
     return 0;
     
 }
-
-
