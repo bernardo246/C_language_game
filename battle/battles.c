@@ -57,6 +57,8 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleA
             bossAttackTimer = 2.0f; 
         }
     }
+
+    // mira desenhada depois dos sprites, ver final da funcao
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
         Vector2 mouse = GetMousePosition();
         spawn_projectile(projectiles, player, mouse, player_projectile_anim);
@@ -81,6 +83,7 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleA
         Collision_boss_projectile(boss, projectiles,5);      // Projéteis do JOGADOR acertando o CHEFE
         Collision_boss_projectile(player, boss_projectiles,10); // Projéteis do CHEFE acertando o JOGADOR
     }
+    mostrar_mira(list);
     DrawRectangle(10,70,player->hp,10,GREEN);
 
     EndDrawing();

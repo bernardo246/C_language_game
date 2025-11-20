@@ -4,6 +4,9 @@
 #include <raylib.h>
 #include <stdbool.h>
 
+// Forward declaro para evitar incluir battlefunctions.h aqui (ciclo).
+typedef struct h henchman;
+
 // Identificadores das animacoes compartilhadas na batalha.
 typedef enum {
     BATTLE_ANIM_PLAYER_MAGO = 0,
@@ -28,6 +31,7 @@ BattleAnimation *criar_battle_animation(const char *frame_paths[], int frame_cou
 void atualizar_battle_animation(BattleAnimation *anim, bool personagem_em_movimento);
 Texture2D battle_animation_get_frame(const BattleAnimation *anim);
 void descarregar_battle_animation(BattleAnimation *anim);
+void mostrar_mira(henchman *henchman);
 
 // API do gerenciador centralizado
 BattleAnimation *obter_battle_animation(BattleAnimationId id);

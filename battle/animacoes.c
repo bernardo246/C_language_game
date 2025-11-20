@@ -4,6 +4,10 @@
 #include <raylib.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include "battlefunctions.h"
+#include "..\movimentacao\animacao.h"
 
 static const char *player_mago_frames[] = {
     "img/battle/player/leste1.png",
@@ -155,5 +159,56 @@ void descarregar_animacoes_batalha(void) {
             descarregar_battle_animation(animation_cache[i]);
             animation_cache[i] = NULL;
         }
+    }
+}
+
+
+// MIRA DINAMICA 
+
+void mostrar_mira(henchman *henchman){
+    // Desenha uma mira quadrada no mouse: vermelha se sobre um henchman, verde caso contrario.
+    // Mantemos a checagem simples usando o mesmo scale de colisao dos capangas.
+    static const float HENCHMAN_COLLISION_SCALE = 0.08f;
+
+    Vector2 mouse = GetMousePosition();
+    bool em_cima_de_henchman = false;
+    for (int i = 0; i < MAX_HENCH; i++) {
+        if (!henchman[i].active) continue;
+
+        Texture2D henchFrame = battle_animation_get_frame(henchman[i].anim);
+        if (henchFrame.id == 0) continue;
+
+        Rectangle henchmanRect = {
+            henchman[i].x - (henchFrame.width * HENCHMAN_COLLISION_SCALE / 2.0f),
+            henchman[i].y - (henchFrame.height * HENCHMAN_COLLISION_SCALE / 2.0f),
+            (float)henchFrame.width * HENCHMAN_COLLISION_SCALE,
+            (float)henchFrame.height * HENCHMAN_COLLISION_SCALE
+        };
+
+        if (CheckCollisionPointRec(mouse, henchmanRect)) {
+            em_cima_de_henchman = true;
+            break;
+        }
+    }
+
+    Color cor_mira = em_cima_de_henchman ? RED : GREEN;
+    const float tamanho = 36.0f;
+    const float arredondamento = 0.3f;
+    Rectangle mira = {
+        mouse.x - tamanho / 2.0f,
+        mouse.y - tamanho / 2.0f,
+        tamanho,
+        tamanho
+    };
+    const int espessura = 4;
+    for (int i = 0; i < espessura; i++) {
+        Rectangle r = {
+            mira.x - (float)i,
+            mira.y - (float)i,
+        mira.width + 2.0f * (float)i,
+        mira.height + 2.0f * (float)i
+    };
+        // Desenho empilhado: cada loop expande o retangulo para simular espessura de borda.
+        DrawRectangleRoundedLines(r, arredondamento, 6, cor_mira);
     }
 }
