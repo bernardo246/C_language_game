@@ -16,6 +16,7 @@ static Projectile projectiles[MAX_PROJECTILES];
 static Projectile boss_projectiles[MAX_PROJECTILES];
 static WaveManager waveManager;
 static float bossAttackTimer = 2.0f; // Chefe ataca a cada 2 segundos
+static bool cursor_oculto = false;   // controla se o cursor padrao ja foi escondido
 
 // Reinicia o estado completo da batalha para um novo começo.
 void reiniciar_batalha(henchman *list, Personagem_em_batalha *player, Personagem_em_batalha *boss) {
@@ -33,6 +34,12 @@ void reiniciar_batalha(henchman *list, Personagem_em_batalha *player, Personagem
 void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleAnimation *henchman_anim,Personagem_em_batalha *boss, int *direcao) {
     BattleAnimation *player_projectile_anim = obter_battle_animation(BATTLE_ANIM_PROJECTILE_PLAYER);
     BattleAnimation *boss_projectile_anim = obter_battle_animation(BATTLE_ANIM_PROJECTILE_BOSS);
+
+    // Esconde o cursor nativo para ficar apenas a mira customizada desenhada em battle/animacoes.c
+    if (!cursor_oculto) {
+        HideCursor();
+        cursor_oculto = true;
+    }
 
     
     BeginDrawing();
