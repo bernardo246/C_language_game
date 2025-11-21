@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "battlefunctions.h"
-#include "..\movimentacao\animacao.h"
+#include "../movimentacao/animacao.h"
 
 static const char *player_mago_frames[] = {
     "img/battle/player/leste1.png",
