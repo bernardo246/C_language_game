@@ -37,10 +37,21 @@ int main(){
     memset(henchList, 0, sizeof(henchList)); // Zera a lista para garantir que 'active' seja 0
 
     BattleAnimation *henchman_anim = obter_battle_animation(BATTLE_ANIM_HENCH_MONSTRO_PEDRA);
-    // TEM QUE SUBSTITUIR ESSE TRECHO PARA O LOADTEXTURE DA TEEXTURA DO FUNDO DA BATALHA
-    Image img = GenImageColor(1280, 720, BLACK);
-    Texture2D backgroud_sprite = LoadTextureFromImage(img);
-    UnloadImage(img);
+    //TEXTURA DO FUNDO DA BATALHA
+    Image img_cenario_de_pedra = LoadImage("img/battle/cenarios/cenerario_pedra.png");
+    ImageResize(&img_cenario_de_pedra, 1280, 720);
+    Texture2D cenario_de_pedra = LoadTextureFromImage(img_cenario_de_pedra);
+    UnloadImage(img_cenario_de_pedra);
+    
+    Image img_cenario_de_fogo = LoadImage("img/battle/cenarios/cenerario_fogo.png");
+    ImageResize(&img_cenario_de_fogo, 1280, 720);
+    Texture2D cenario_de_fogo = LoadTextureFromImage(img_cenario_de_fogo);
+    UnloadImage(img_cenario_de_fogo);
+
+    Image img_cenario_de_planta = LoadImage("img/battle/cenarios/cenerario_planta.png");
+    ImageResize(&img_cenario_de_planta, 1280, 720);
+    Texture2D cenario_de_planta = LoadTextureFromImage(img_cenario_de_planta);
+    UnloadImage(img_cenario_de_planta);
     
     
     
@@ -105,18 +116,22 @@ int main(){
         
         if (opcao==2){
 
+            BeginDrawing();
+            ClearBackground(BLACK); // Limpa a tela para a cena de batalha
+
             if (opcao_battle == 1) {
-                batalha(&battle_player,backgroud_sprite,henchList,henchman_anim,&boss, &direcao);
+                batalha(&battle_player,cenario_de_pedra,henchList,henchman_anim,&boss, &direcao);
             }
             if (opcao_battle == 2) {
-                batalha(&battle_player,backgroud_sprite,henchList,henchman_anim,&boss, &direcao);
+                batalha(&battle_player,cenario_de_planta,henchList,henchman_anim,&boss, &direcao);
             }
             if (opcao_battle == 3) {
-                batalha(&battle_player,backgroud_sprite,henchList,henchman_anim,&boss, &direcao);
+                batalha(&battle_player,cenario_de_fogo,henchList,henchman_anim,&boss, &direcao);
             }
             if (IsKeyPressed(KEY_M) || battle_player.hp <= 0) {
                 opcao = 1; // Volta para a tela do mapa
             }
+            EndDrawing();
         }
     }   
 
@@ -125,6 +140,9 @@ int main(){
     descarregar_texturas();
     // descarrega todas as animacoes de batalha compartilhadas.
     descarregar_animacoes_batalha();
+    UnloadTexture(cenario_de_pedra);
+    UnloadTexture(cenario_de_fogo);
+    UnloadTexture(cenario_de_planta);
     UnloadTexture(fundo);
     descarregar_menu();
     CloseWindow();
