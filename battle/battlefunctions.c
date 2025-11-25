@@ -319,7 +319,7 @@ void desenhar_menu_vitoria(void) {
     // 2. Desenha o texto de vitória
     const char *titulo = "VITÓRIA!";
     const int tamanho_titulo = 100;
-    int largura_titulo = MeasureText(titulo, tamanho_titulo);
+    int largura_titulo = MeasureText(titulo, tamanho_titulo);// serve para sentralizar e otimizar a quantidade de pixels utilizados
     DrawText(titulo, (screenWidth - largura_titulo) / 2, screenHeight / 2 - 100, tamanho_titulo, GOLD);
 
     // 3. Desenha a instrução para voltar ao mapa
