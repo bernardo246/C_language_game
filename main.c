@@ -38,17 +38,17 @@ int main(){
 
     BattleAnimation *henchman_anim = obter_battle_animation(BATTLE_ANIM_HENCH_MONSTRO_PEDRA);
     //TEXTURA DO FUNDO DA BATALHA
-    Image img_cenario_de_pedra = LoadImage("img/battle/cenarios/cenerario_pedra.png");
+    Image img_cenario_de_pedra = LoadImage("img/battle/cenarios/cenario_pedra.png");
     ImageResize(&img_cenario_de_pedra, 1280, 720);
     Texture2D cenario_de_pedra = LoadTextureFromImage(img_cenario_de_pedra);
     UnloadImage(img_cenario_de_pedra);
     
-    Image img_cenario_de_fogo = LoadImage("img/battle/cenarios/cenerario_fogo.png");
+    Image img_cenario_de_fogo = LoadImage("img/battle/cenarios/cenario_fogo.png");
     ImageResize(&img_cenario_de_fogo, 1280, 720);
     Texture2D cenario_de_fogo = LoadTextureFromImage(img_cenario_de_fogo);
     UnloadImage(img_cenario_de_fogo);
 
-    Image img_cenario_de_planta = LoadImage("img/battle/cenarios/cenerario_planta.png");
+    Image img_cenario_de_planta = LoadImage("img/battle/cenarios/cenario_planta.png");
     ImageResize(&img_cenario_de_planta, 1280, 720);
     Texture2D cenario_de_planta = LoadTextureFromImage(img_cenario_de_planta);
     UnloadImage(img_cenario_de_planta);
@@ -117,7 +117,7 @@ int main(){
         if (opcao==2){
 
             BeginDrawing();
-            ClearBackground(BLACK); // Limpa a tela para a cena de batalha
+            ClearBackground(BLACK);
 
             if (opcao_battle == 1) {
                 batalha(&battle_player,cenario_de_pedra,henchList,henchman_anim,&boss, &direcao);

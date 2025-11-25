@@ -41,11 +41,8 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleA
         cursor_oculto = true;
     }
 
-    
-    BeginDrawing();
-
-    ClearBackground((Color){ 20, 20, 30, 255 });// colocar o fundo é so desenhar o parametro BACK
-    
+    // O fundo agora é desenhado no loop principal em main.c
+    DrawTexture(back, 0, 0, WHITE);
 
     DrawText("Batalha em andamento... Pressione M para voltar ao mapa.", 10, 10, 20, RAYWHITE);
     DrawText("Clique com o botao esquerdo para atirar.", 10, 40, 20, RAYWHITE);
@@ -92,7 +89,5 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleA
     }
     mostrar_mira(list);
     DrawRectangle(10,70,player->hp,10,GREEN);
-
-    EndDrawing();
 
 }
