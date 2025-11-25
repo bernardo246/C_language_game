@@ -12,6 +12,7 @@ static const float HENCHMAN_SCALE = 0.10f;          // escala visual
 static const float HENCHMAN_COLLISION_SCALE = 0.08f;
 static const float PLAYER_COLLISION_SCALE = 0.08f;
 static const float BOSS_COLLISION_SCALE = 0.08f;
+static const float BOSS_DRAW_SCALE = 0.2f; // Escala para desenhar o boss. Ajuste conforme necessário.
 static const float PROJECTILE_SCALE = 0.10f;
 
 // Calcula o raio aproximado de um capanga usando a textura escalonada
@@ -266,14 +267,21 @@ int count_active_henchmen(henchman *henchList) {
 void update_wave(WaveManager *waveManager, henchman *henchList, BattleAnimation *henchman_anim, int screenWidth, int screenHeight, Personagem_em_batalha *p,Personagem_em_batalha *boss) {
     waveManager->activeEnemies = count_active_henchmen(henchList);
 
-    
-    if (waveManager->wave == 3) {
-        if (!boss->active) {
-            waveManager->wave++; 
+    // Se a horda do boss (3) já passou e o boss foi derrotado, a batalha terminou.
+    if (waveManager->wave > 3) {
+        // A lógica de desenho da vitória agora é tratada em battles.c
+        return;
+    }
+
+    // Se estamos na horda do boss e ele foi derrotado, avançamos para a próxima horda.
+    if (waveManager->wave == 3 && boss->active) {
+        if(boss->hp<=0){
+            waveManager->wave++;
+            waveManager->spawnTimer = 0; 
+            waveManager->enemiesToSpawn = 0;
+            boss->active = 0;
+            p->active = 1;
             p->hp = 100;
-            p->x = 256; 
-            p->y = 360;
-            // Aqui você pode adicionar uma lógica para voltar ao mapa ou mostrar uma tela de vitória.
         }
         return;
     }
@@ -300,6 +308,27 @@ void update_wave(WaveManager *waveManager, henchman *henchList, BattleAnimation 
         }
     }
 }
+
+void desenhar_menu_vitoria(void) {
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+
+    // 1. Escurece o fundo para dar foco ao menu
+    DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.7f));
+
+    // 2. Desenha o texto de vitória
+    const char *titulo = "VITÓRIA!";
+    const int tamanho_titulo = 100;
+    int largura_titulo = MeasureText(titulo, tamanho_titulo);
+    DrawText(titulo, (screenWidth - largura_titulo) / 2, screenHeight / 2 - 100, tamanho_titulo, GOLD);
+
+    // 3. Desenha a instrução para voltar ao mapa
+    const char *instrucao = "Pressione 'M' para voltar ao mapa";
+    const int tamanho_instrucao = 30;
+    int largura_instrucao = MeasureText(instrucao, tamanho_instrucao);
+    DrawText(instrucao, (screenWidth - largura_instrucao) / 2, screenHeight / 2 + 50, tamanho_instrucao, WHITE);
+}
+
 
 //update projectile
 void update_and_draw_projectiles(Projectile *projList, int screenWidth, int screenHeight) {
@@ -422,7 +451,15 @@ void boss_movement(Personagem_em_batalha *p,int *direcao){
     }
     Texture2D frame = battle_animation_get_frame(p->anim);
     if (frame.id != 0) {
-        DrawTexture(frame,p->x,p->y,WHITE);
+        // Usa DrawTexturePro para redimensionar o boss
+        Rectangle src = {0, 0, (float)frame.width, (float)frame.height};
+        Rectangle dest = {
+            p->x,
+            p->y,
+            (float)frame.width * BOSS_DRAW_SCALE,
+            (float)frame.height * BOSS_DRAW_SCALE};
+        Vector2 origin = {dest.width / 2.0f, dest.height / 2.0f};
+        DrawTexturePro(frame, src, dest, origin, 0.0f, WHITE);
     }
     if(p->y<0){
         p->y=0;

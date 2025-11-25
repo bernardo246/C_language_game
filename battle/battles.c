@@ -50,6 +50,13 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleA
     sprintf(waveText, "Horda: %d", waveManager.wave);
     DrawText(waveText, 1180, 10, 20, RAYWHITE);
 
+    // Se a batalha foi vencida, mostra o menu de vitória em vez do jogo
+    if (waveManager.wave > 3) {
+        mostrar_mira(list); // Continua mostrando a mira para clicar no botão
+        desenhar_menu_vitoria(); // A ação do botão será tratada no main.c
+        return; // Interrompe a execução do resto da lógica da batalha
+    }
+
     if (boss->active) boss_movement(boss, direcao);
     mov_battle(player);
 
@@ -89,5 +96,7 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,BattleA
     }
     mostrar_mira(list);
     DrawRectangle(10,70,player->hp,10,GREEN);
+    if(boss->active)DrawRectangle(10,90,boss->hp,10,RED);
+    
 
 }

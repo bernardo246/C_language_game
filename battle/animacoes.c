@@ -24,7 +24,7 @@ static const char *hench_monstro_pedra_frames[] = {
 };
 
 static const char *boss_monstro_fogo_frames[] = {
-    "img/battle/monstros/monstro_fogo/mf1.png"
+    "img/battle/chefoes/mago_pedra.png"
 };
 
 static const char *projectile_player_frames[] = {
@@ -45,9 +45,9 @@ static BattleAnimation *carregar_animacao_por_id(BattleAnimationId id) {
         case BATTLE_ANIM_PLAYER_MAGO:
             return criar_battle_animation(player_mago_frames, 4, 70.0);
         case BATTLE_ANIM_HENCH_MONSTRO_PEDRA:
-            return criar_battle_animation(hench_monstro_pedra_frames, 1, 150.0);
+            return criar_battle_animation(hench_monstro_pedra_frames, 4, 150.0);
         case BATTLE_ANIM_BOSS_MONSTRO_FOGO:
-            return criar_battle_animation(boss_monstro_fogo_frames, 1, 200.0);
+            return criar_battle_animation(boss_monstro_fogo_frames, 3, 200.0);
         case BATTLE_ANIM_PROJECTILE_PLAYER:
             return criar_battle_animation(projectile_player_frames, 2, 80.0);
         case BATTLE_ANIM_PROJECTILE_BOSS:
