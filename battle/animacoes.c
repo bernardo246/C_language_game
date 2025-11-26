@@ -76,10 +76,10 @@ void atualizar_animacao_estado(AnimacaoEstado *estado, bool em_movimento) {
         return;
     }
 
-    int passos = (int)(estado->acumulado_ms / estado->dados->intervalo_ms);
-    estado->frame_atual = (estado->frame_atual + passos) % estado->dados->frame_count;
-    estado->acumulado_ms = fmod(estado->acumulado_ms, estado->dados->intervalo_ms);
-    estado->textura_atual = estado->dados->frames[estado->frame_atual];
+    int passos = (int)(estado->acumulado_ms / estado->dados->intervalo_ms);// contar quantos frames passam 
+    estado->frame_atual = (estado->frame_atual + passos) % estado->dados->frame_count;//avança com wrap-around (loop)
+    estado->acumulado_ms = fmod(estado->acumulado_ms, estado->dados->intervalo_ms);//preserva o tempo sobrado do avanço 
+    estado->textura_atual = estado->dados->frames[estado->frame_atual]; // aqui é que ele atualiza de verdade a textura
 }
 
 // Recupera o frame atual (ou zerado se algo faltou).
