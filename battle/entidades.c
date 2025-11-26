@@ -7,7 +7,7 @@
 // ---- Paths de sprites por batalha (edite aqui para trocar visuais) ----
 // Batalha 1 (pedra)
 static const char *PLAYER_B1_FRAMES[]      = {"img/battle/player/leste1.png", "img/battle/player/leste2.png", "img/battle/player/leste3.png", "img/battle/player/leste4.png"};
-static const char *HENCH_B1_FRAMES[]       = {"img/battle/monstros/monstro_pedra/mp1.png", "img/battle/monstros/monstro_pedra/mp2.png", "img/battle/monstros/monstro_pedra/mp3.png", "img/battle/monstros/monstro_pedra/mp4.png"};
+static const char *HENCH_B1_FRAMES[]       = {"img/battle/monstros/monstro_pedra/mp1.png"};
 static const char *BOSS_B1_FRAMES[]        = {"img/battle/chefoes/mago_pedra.png"};
 static const char *PROJ_PLAYER_B1_FRAMES[] = {"img/battle/projeteis/mago_principal/p1.png", "img/battle/projeteis/mago_principal/p2.png"};
 static const char *PROJ_BOSS_B1_FRAMES[]   = {"img/battle/projeteis/mago_pedra/p1.png", "img/battle/projeteis/mago_pedra/p2.png"};
