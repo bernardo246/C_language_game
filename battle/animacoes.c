@@ -1,170 +1,96 @@
 #include "animacoes.h"
 
 #include <math.h>
-#include <raylib.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
-#include <stdbool.h>
+#include <raylib.h>
 #include "battlefunctions.h"
-#include "../movimentacao/animacao.h"
 
-static const char *player_mago_frames[] = {
-    "img/battle/player/leste1.png",
-    "img/battle/player/leste2.png",
-    "img/battle/player/leste3.png",
-    "img/battle/player/leste4.png"
-};
-
-static const char *hench_monstro_pedra_frames[] = {
-    "img/battle/monstros/monstro_pedra/mp1.png",
-    "img/battle/monstros/monstro_pedra/mp2.png",
-    "img/battle/monstros/monstro_pedra/mp3.png",
-    "img/battle/monstros/monstro_pedra/mp4.png"
-};
-
-static const char *boss_monstro_fogo_frames[] = {
-    "img/battle/chefoes/mago_pedra.png"
-};
-
-static const char *projectile_player_frames[] = {
-    "img/battle/projeteis/mago_principal/p1.png",
-    "img/battle/projeteis/mago_principal/p2.png"
-};
-
-static const char *projectile_boss_frames[] = {
-    "img/battle/projeteis/mago_pedra/p1.png",
-    "img/battle/projeteis/mago_pedra/p2.png"
-};
-
-// Cache simples para cada id de animacao.
-static BattleAnimation *animation_cache[BATTLE_ANIM_COUNT] = {0};
-
-static BattleAnimation *carregar_animacao_por_id(BattleAnimationId id) {
-    switch (id) {
-        case BATTLE_ANIM_PLAYER_MAGO:
-            return criar_battle_animation(player_mago_frames, 4, 70.0);
-        case BATTLE_ANIM_HENCH_MONSTRO_PEDRA:
-            return criar_battle_animation(hench_monstro_pedra_frames, 4, 150.0);
-        case BATTLE_ANIM_BOSS_MONSTRO_FOGO:
-            return criar_battle_animation(boss_monstro_fogo_frames, 3, 200.0);
-        case BATTLE_ANIM_PROJECTILE_PLAYER:
-            return criar_battle_animation(projectile_player_frames, 2, 80.0);
-        case BATTLE_ANIM_PROJECTILE_BOSS:
-            return criar_battle_animation(projectile_boss_frames, 2, 80.0);
-        default:
-            return NULL;
+// Carrega todos os frames informados e prepara a struct de dados compartilhados.
+// Retorna false em caso de erro para permitir checagem no código de montagem da batalha.
+bool carregar_animacao_dados(AnimacaoDados *anim, const char **paths, int frame_count, double intervalo_ms) {
+    if (!anim || !paths || frame_count <= 0 || intervalo_ms <= 0.0) {
+        return false;
     }
-}
-
-// Carrega os frames definidos em frame_paths e prepara a animacao.
-BattleAnimation *criar_battle_animation(const char *frame_paths[], int frame_count, double intervalo_ms) {
-    if (frame_paths == NULL || frame_count <= 0 || intervalo_ms <= 0.0) {
-        return NULL;
-    }
-
-    BattleAnimation *anim = (BattleAnimation *)malloc(sizeof(BattleAnimation));
-    if (!anim) {
-        return NULL;
-    }
+    memset(anim, 0, sizeof(*anim));
+    anim->paths = paths;
+    anim->frame_count = frame_count;
+    anim->intervalo_ms = intervalo_ms;
 
     anim->frames = (Texture2D *)malloc(sizeof(Texture2D) * frame_count);
     if (!anim->frames) {
-        free(anim);
-        return NULL;
+        return false;
     }
-
     memset(anim->frames, 0, sizeof(Texture2D) * frame_count);
+
+    // Carrega cada arquivo de sprite em uma Texture2D.
     for (int i = 0; i < frame_count; i++) {
-        anim->frames[i] = LoadTexture(frame_paths[i]);
+        anim->frames[i] = LoadTexture(paths[i]);
     }
-
-    anim->frame_count = frame_count;
-    anim->frame_atual = 0;
-    anim->intervalo_ms = intervalo_ms;
-    anim->acumulado_ms = 0.0;
-
-    return anim;
+    return true;
 }
 
-// Helper para converter o delta do Raylib (s) para ms.
-static inline double get_delta_ms(void) {
+// Libera as textures carregadas e zera ponteiros.
+void descarregar_animacao_dados(AnimacaoDados *anim) {
+    if (!anim || !anim->frames) return;
+
+    for (int i = 0; i < anim->frame_count; i++) {
+        if (anim->frames[i].id != 0) {
+            UnloadTexture(anim->frames[i]);
+        }
+    }
+    free(anim->frames);
+    anim->frames = NULL;
+}
+
+// Liga um estado individual a um conjunto de dados já carregado.
+void iniciar_animacao_estado(AnimacaoEstado *estado, AnimacaoDados *dados) {
+    if (!estado) return;
+    estado->dados = dados;
+    estado->frame_atual = 0;
+    estado->acumulado_ms = 0.0;
+    estado->textura_atual = (Texture2D){0};
+    if (dados && dados->frames && dados->frame_count > 0) {
+        estado->textura_atual = dados->frames[0];
+    }
+}
+
+// Converte delta de raylib (s) para ms.
+static inline double delta_ms(void) {
     return GetFrameTime() * 1000.0;
 }
 
-// Avanca frames quando o personagem esta em movimento.
-void atualizar_battle_animation(BattleAnimation *anim, bool personagem_em_movimento) {
-    if (!anim || anim->frame_count <= 0) {
+// Avança a animação se o personagem/projétil está em movimento.
+void atualizar_animacao_estado(AnimacaoEstado *estado, bool em_movimento) {
+    if (!estado || !estado->dados || !estado->dados->frames || estado->dados->frame_count <= 0) return;
+
+    if (!em_movimento) {
+        estado->frame_atual = 0;
+        estado->acumulado_ms = 0.0;
+        estado->textura_atual = estado->dados->frames[0];
         return;
     }
 
-    if (!personagem_em_movimento) {
-        anim->frame_atual = 0;
-        anim->acumulado_ms = 0.0;
+    estado->acumulado_ms += delta_ms();
+    if (estado->acumulado_ms < estado->dados->intervalo_ms) {
         return;
     }
 
-    anim->acumulado_ms += get_delta_ms();
-    if (anim->acumulado_ms < anim->intervalo_ms) {
-        return;
-    }
-
-    int frames_to_advance = (int)(anim->acumulado_ms / anim->intervalo_ms);
-    anim->frame_atual = (anim->frame_atual + frames_to_advance) % anim->frame_count;
-    anim->acumulado_ms = fmod(anim->acumulado_ms, anim->intervalo_ms);
+    int passos = (int)(estado->acumulado_ms / estado->dados->intervalo_ms);
+    estado->frame_atual = (estado->frame_atual + passos) % estado->dados->frame_count;
+    estado->acumulado_ms = fmod(estado->acumulado_ms, estado->dados->intervalo_ms);
+    estado->textura_atual = estado->dados->frames[estado->frame_atual];
 }
 
-// Retorna o frame atual ou um Texture2D zerado.
-Texture2D battle_animation_get_frame(const BattleAnimation *anim) {
-    if (!anim || anim->frame_count <= 0) {
+// Recupera o frame atual (ou zerado se algo faltou).
+Texture2D animacao_frame_atual(const AnimacaoEstado *estado) {
+    if (!estado || !estado->dados || !estado->dados->frames || estado->dados->frame_count <= 0) {
         return (Texture2D){0};
     }
-
-    return anim->frames[anim->frame_atual];
+    return estado->textura_atual;
 }
-
-// Descarta texturas carregadas e libera memoria da animacao.
-void descarregar_battle_animation(BattleAnimation *anim) {
-    if (!anim) {
-        return;
-    }
-
-    if (anim->frames) {
-        for (int i = 0; i < anim->frame_count; i++) {
-            if (anim->frames[i].id != 0) {
-                UnloadTexture(anim->frames[i]);
-            }
-        }
-        free(anim->frames);
-    }
-
-    free(anim);
-}
-
-// Retorna (e carrega, se preciso) a animacao correspondente ao id solicitado.
-BattleAnimation *obter_battle_animation(BattleAnimationId id) {
-    if (id < 0 || id >= BATTLE_ANIM_COUNT) {
-        return NULL;
-    }
-    if (!animation_cache[id]) {
-        animation_cache[id] = carregar_animacao_por_id(id);
-    }
-    return animation_cache[id];
-}
-
-// Libera todas as animacoes armazenadas no cache.
-void descarregar_animacoes_batalha(void) {
-    for (int i = 0; i < BATTLE_ANIM_COUNT; i++) {
-        if (animation_cache[i]) {
-            descarregar_battle_animation(animation_cache[i]);
-            animation_cache[i] = NULL;
-        }
-    }
-}
-
 
 // MIRA DINAMICA 
-
 void mostrar_mira(henchman *henchman){
     // Desenha uma mira quadrada no mouse: vermelha se sobre um henchman, verde caso contrario.
     // Mantemos a checagem simples usando o mesmo scale de colisao dos capangas.
@@ -175,7 +101,7 @@ void mostrar_mira(henchman *henchman){
     for (int i = 0; i < MAX_HENCH; i++) {
         if (!henchman[i].active) continue;
 
-        Texture2D henchFrame = battle_animation_get_frame(henchman[i].anim);
+        Texture2D henchFrame = animacao_frame_atual(&henchman[i].anim);
         if (henchFrame.id == 0) continue;
 
         Rectangle henchmanRect = {
@@ -205,9 +131,9 @@ void mostrar_mira(henchman *henchman){
         Rectangle r = {
             mira.x - (float)i,
             mira.y - (float)i,
-        mira.width + 2.0f * (float)i,
-        mira.height + 2.0f * (float)i
-    };
+            mira.width + 2.0f * (float)i,
+            mira.height + 2.0f * (float)i
+        };
         // Desenho empilhado: cada loop expande o retangulo para simular espessura de borda.
         DrawRectangleRoundedLines(r, arredondamento, 6, cor_mira);
     }

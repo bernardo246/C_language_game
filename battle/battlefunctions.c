@@ -17,7 +17,7 @@ static const float PROJECTILE_SCALE = 0.10f;
 
 // Calcula o raio aproximado de um capanga usando a textura escalonada
 static float get_henchman_radius(const henchman *h) {
-    Texture2D frame = battle_animation_get_frame(h->anim);
+    Texture2D frame = animacao_frame_atual(&h->anim);
     if (frame.id == 0) {
         return 0.0f;
     }
@@ -68,7 +68,8 @@ static void resolve_henchman_collisions(henchman *henchList) {
     }
 }
 
-// Atualiza posicao, animacao e desenha o jogador na batalha.
+// Atualiza posição, animação e desenha o jogador na batalha.
+// Passos: ler input, mover mantendo limites da tela, avançar animação e desenhar rotacionado para o mouse.
 void mov_battle(Personagem_em_batalha *p)
 {
     Vector2 mouse = GetMousePosition();
@@ -99,10 +100,8 @@ void mov_battle(Personagem_em_batalha *p)
     if(p->x>1280)p->x=1280;
     if(p->y>720)p->y=720;
 
-    if (p->anim) {
-        atualizar_battle_animation(p->anim, personagem_em_movimento);
-    }
-    Texture2D frame = battle_animation_get_frame(p->anim);
+    atualizar_animacao_estado(&p->anim, personagem_em_movimento);
+    Texture2D frame = animacao_frame_atual(&p->anim);
     if (frame.id == 0) {
         return;
     }
@@ -119,20 +118,22 @@ void mov_battle(Personagem_em_batalha *p)
 
 
 // Gera capanga fora da tela usando a animacao fornecida.
-void spawn_henchman_offscreen(henchman *henchList, BattleAnimation *anim, float speed, int hp, int damage, int screenWidth, int screenHeight) {
+// Cria e posiciona um capanga fora da tela, ligando-o à animação compartilhada.
+void spawn_henchman_offscreen(henchman *henchList, DadosEntidade *hench_dados, int screenWidth, int screenHeight) {
     // procura um slot livre
+    if (!hench_dados) return;
     for (int i = 0; i < MAX_HENCH; i++) {
         if (!henchList[i].active) {
-            henchList[i].anim = anim;
-            henchList[i].speed = speed;
-            henchList[i].hp = hp;
-            henchList[i].damage = damage;
+            iniciar_animacao_estado(&henchList[i].anim, &hench_dados->animacao);
+            henchList[i].speed = hench_dados->speed;
+            henchList[i].hp = hench_dados->hp;
+            henchList[i].damage = hench_dados->damage;
             henchList[i].active = 1;
 
             int side = rand() % 4;
 
             // Usa a largura e altura escalonadas para posicionar o capanga um pouco fora da tela.
-            Texture2D frame = battle_animation_get_frame(anim);
+            Texture2D frame = animacao_frame_atual(&henchList[i].anim);
             float scaledWidth = frame.width * HENCHMAN_SCALE;
             float scaledHeight = frame.height * HENCHMAN_SCALE;
             switch (side) {
@@ -161,7 +162,7 @@ void spawn_henchman_offscreen(henchman *henchList, BattleAnimation *anim, float 
 
 
 
-// Move capangas em direcao ao jogador e desenha cada um.
+// Move capangas em direcao ao jogador, resolve empurrões entre eles e desenha apontando para o player.
 void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
     float dt = GetFrameTime(); // dt unico garante movimento suave em FPS diferentes
 
@@ -183,6 +184,7 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
         // Move o capanga ate o player
         h->x += dir.x * h->speed * dt;
         h->y += dir.y * h->speed * dt;
+        atualizar_animacao_estado(&h->anim, true);
     }
 
     // Segunda etapa: separa capangas que encostaram entre si
@@ -196,7 +198,7 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
 
         // Calcula o angulo para desenhar o sprite apontado para o jogador
         float angle = atan2f(p->y - h->y, p->x - h->x);
-        Texture2D frame = battle_animation_get_frame(h->anim);
+        Texture2D frame = animacao_frame_atual(&h->anim);
         if (frame.id == 0) {
             continue;
         }
@@ -216,8 +218,9 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
 }
 
 
-void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mouse, BattleAnimation *anim) {
-    if (!anim) return;
+// Reaproveita um slot livre de projétil, aponta para o mouse e liga à animação compartilhada.
+void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mouse, DadosProjetil *dados_proj) {
+    if (!dados_proj) return;
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (!projList[i].active) {
             projList[i].x = p->x;
@@ -235,9 +238,10 @@ void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mo
                 projList[i].dy = 0;
             }
 
-            projList[i].speed = 800.0f; 
-            projList[i].anim = anim;
+            projList[i].speed = dados_proj->speed; 
+            iniciar_animacao_estado(&projList[i].anim, &dados_proj->animacao);
             projList[i].angle_deg = atan2f(projList[i].dy, projList[i].dx) * RAD2DEG;
+            projList[i].damage = dados_proj->damage;
             projList[i].active = 1;
 
             break; 
@@ -263,13 +267,13 @@ int count_active_henchmen(henchman *henchList) {
     return count;
 }
 
-// Gerencia hordas: spawns, avanco para novas ondas e habilita o boss.
-void update_wave(WaveManager *waveManager, henchman *henchList, BattleAnimation *henchman_anim, int screenWidth, int screenHeight, Personagem_em_batalha *p,Personagem_em_batalha *boss) {
+// Gerencia hordas: controla timers de spawn, avança onda e libera o boss na onda 3.
+void update_wave(WaveManager *waveManager, henchman *henchList, DadosEntidade *hench_dados, int screenWidth, int screenHeight, Personagem_em_batalha *p,Personagem_em_batalha *boss) {
     waveManager->activeEnemies = count_active_henchmen(henchList);
 
     // Se a horda do boss (3) já passou e o boss foi derrotado, a batalha terminou.
     if (waveManager->wave > 3) {
-        // A lógica de desenho da vitória agora é tratada em battles.c
+        // A lógica de desenho da vitoria agora é tratada em battles.c
         return;
     }
 
@@ -303,7 +307,7 @@ void update_wave(WaveManager *waveManager, henchman *henchList, BattleAnimation 
         waveManager->spawnTimer += GetFrameTime();
         if (waveManager->spawnTimer >= waveManager->spawnRate) {
             waveManager->spawnTimer = 0;
-            spawn_henchman_offscreen(henchList, henchman_anim, 150.0f, 6, 10, screenWidth, screenHeight);
+            spawn_henchman_offscreen(henchList, hench_dados, screenWidth, screenHeight);
             waveManager->enemiesToSpawn--;
         }
     }
@@ -316,8 +320,8 @@ void desenhar_menu_vitoria(void) {
     // 1. Escurece o fundo para dar foco ao menu
     DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.7f));
 
-    // 2. Desenha o texto de vitória
-    const char *titulo = "VITÓRIA!";
+    // 2. Desenha o texto de vitoria
+    const char *titulo = "VITORIA!";
     const int tamanho_titulo = 100;
     int largura_titulo = MeasureText(titulo, tamanho_titulo);// serve para sentralizar e otimizar a quantidade de pixels utilizados
     DrawText(titulo, (screenWidth - largura_titulo) / 2, screenHeight / 2 - 100, tamanho_titulo, GOLD);
@@ -333,14 +337,14 @@ void desenhar_menu_vitoria(void) {
 //update projectile
 void update_and_draw_projectiles(Projectile *projList, int screenWidth, int screenHeight) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
-        if (!projList[i].active || !projList[i].anim) continue;
+        if (!projList[i].active || !projList[i].anim.dados) continue;
 
         // Move o projetil pela hip
         projList[i].x += projList[i].dx * projList[i].speed * GetFrameTime();
         projList[i].y += projList[i].dy * projList[i].speed * GetFrameTime();
 
-        atualizar_battle_animation(projList[i].anim, true);
-        Texture2D frame = battle_animation_get_frame(projList[i].anim);
+        atualizar_animacao_estado(&projList[i].anim, true);
+        Texture2D frame = animacao_frame_atual(&projList[i].anim);
         if (frame.id == 0) continue;
 
         Rectangle src = {0, 0, frame.width, frame.height};
@@ -367,9 +371,9 @@ void update_and_draw_projectiles(Projectile *projList, int screenWidth, int scre
 // Trata dano dos projeteis do jogador nos capangas.
 void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchList) {
     for (int i = 0; i < MAX_PROJECTILES; i++) {
-        if (!projList[i].active || !projList[i].anim) continue;
+        if (!projList[i].active || !projList[i].anim.dados) continue;
 
-        Texture2D projFrame = battle_animation_get_frame(projList[i].anim);
+        Texture2D projFrame = animacao_frame_atual(&projList[i].anim);
         if (projFrame.id == 0) continue;
         float projWidth = projFrame.width * PROJECTILE_SCALE;
         float projHeight = projFrame.height * PROJECTILE_SCALE;
@@ -382,7 +386,7 @@ void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchLis
 
         for (int j = 0; j < MAX_HENCH; j++) {
             if (!henchList[j].active) continue;
-            Texture2D frame = battle_animation_get_frame(henchList[j].anim);
+            Texture2D frame = animacao_frame_atual(&henchList[j].anim);
             if (frame.id == 0) continue;
             Rectangle henchRect = {
                 henchList[j].x - (frame.width * HENCHMAN_COLLISION_SCALE / 2.0f),
@@ -394,7 +398,7 @@ void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchLis
             if (CheckCollisionRecs(projRect, henchRect)) {
                 // Colisão detectada
                 projList[i].active = 0;        
-                henchList[j].hp -= 2;          
+                henchList[j].hp -= projList[i].damage;          
 
                 if (henchList[j].hp <= 0) {    
                     henchList[j].active = 0;             
@@ -409,7 +413,7 @@ void handle_projectile_enemy_collisions(Projectile *projList, henchman *henchLis
 //interacao mago x capanga aqui quando o capanga atinge ele, o capanga desaparece 
 // Detecta dano corpo a corpo entre jogador e capangas.
 void wizard_x_henchman_collisions(Personagem_em_batalha *p, henchman *henchList) {
-    Texture2D playerFrame = battle_animation_get_frame(p->anim);
+    Texture2D playerFrame = animacao_frame_atual(&p->anim);
     if (playerFrame.id == 0) {
         return;
     }
@@ -421,7 +425,7 @@ void wizard_x_henchman_collisions(Personagem_em_batalha *p, henchman *henchList)
             (float)playerFrame.width * PLAYER_COLLISION_SCALE,
             (float)playerFrame.height * PLAYER_COLLISION_SCALE
         };
-        Texture2D henchFrame = battle_animation_get_frame(henchList[i].anim);
+        Texture2D henchFrame = animacao_frame_atual(&henchList[i].anim);
         if (henchFrame.id == 0) continue;
         Rectangle henchmanRect = {
             henchList[i].x - (henchFrame.width * HENCHMAN_COLLISION_SCALE / 2.0f),
@@ -446,10 +450,8 @@ void boss_movement(Personagem_em_batalha *p,int *direcao){
     }else{
         p->y -= p->speed * GetFrameTime();
     }
-    if (p->anim) {
-        atualizar_battle_animation(p->anim, em_movimento);
-    }
-    Texture2D frame = battle_animation_get_frame(p->anim);
+    atualizar_animacao_estado(&p->anim, em_movimento);
+    Texture2D frame = animacao_frame_atual(&p->anim);
     if (frame.id != 0) {
         // Usa DrawTexturePro para redimensionar o boss
         Rectangle src = {0, 0, (float)frame.width, (float)frame.height};
@@ -474,8 +476,8 @@ void boss_movement(Personagem_em_batalha *p,int *direcao){
 // Colisoes genericas entre projeteis e o personagem informado (boss ou jogador).
 void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList,int damage){
     for (int i = 0; i < MAX_PROJECTILES; i++) {
-        if (!projList[i].active || !projList[i].anim) continue;
-        Texture2D projFrame = battle_animation_get_frame(projList[i].anim);
+        if (!projList[i].active || !projList[i].anim.dados) continue;
+        Texture2D projFrame = animacao_frame_atual(&projList[i].anim);
         if (projFrame.id == 0) continue;
         float projWidth = projFrame.width * PROJECTILE_SCALE;
         float projHeight = projFrame.height * PROJECTILE_SCALE;
@@ -485,7 +487,7 @@ void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList,in
             projWidth,
             projHeight
         };
-        Texture2D frame = battle_animation_get_frame(p->anim);
+        Texture2D frame = animacao_frame_atual(&p->anim);
         if (frame.id == 0) continue;
         Rectangle bossRect = {
             p->x - (frame.width * BOSS_COLLISION_SCALE / 2.0f),
@@ -496,7 +498,8 @@ void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList,in
 
         if (CheckCollisionRecs(projRect, bossRect)) {
             projList[i].active = 0;        
-            p->hp -= damage;          
+            int dano = (damage > 0) ? damage : projList[i].damage;
+            p->hp -= dano;          
             if (p->hp <= 0) {    
                 p->active = 0;             
             }
@@ -505,8 +508,8 @@ void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList,in
     }
 }
     
-void spawn_projectile_boss(Projectile *projList, Personagem_em_batalha *p,Personagem_em_batalha *boss, BattleAnimation *anim) {
-    if (!anim) return;
+void spawn_projectile_boss(Projectile *projList, Personagem_em_batalha *p,Personagem_em_batalha *boss, DadosProjetil *dados_proj) {
+    if (!dados_proj) return;
     for (int i = 0; i < MAX_PROJECTILES; i++) {
         if (!projList[i].active) {
             projList[i].x = boss->x;
@@ -524,11 +527,13 @@ void spawn_projectile_boss(Projectile *projList, Personagem_em_batalha *p,Person
                 projList[i].dy = 0;
             }
 
-            projList[i].speed = 600.0f;
-            projList[i].anim = anim;
+            projList[i].speed = dados_proj->speed;
+            iniciar_animacao_estado(&projList[i].anim, &dados_proj->animacao);
             projList[i].angle_deg = atan2f(projList[i].dy, projList[i].dx) * RAD2DEG;
+            projList[i].damage = dados_proj->damage;
             projList[i].active = 1;
             break;
         }
     }
 }
+

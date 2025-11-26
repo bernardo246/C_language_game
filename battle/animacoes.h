@@ -7,34 +7,32 @@
 // Forward declaro para evitar incluir battlefunctions.h aqui (ciclo).
 typedef struct h henchman;
 
-// Identificadores das animacoes compartilhadas na batalha.
-typedef enum {
-    BATTLE_ANIM_PLAYER_MAGO = 0,
-    BATTLE_ANIM_HENCH_MONSTRO_PEDRA,
-    BATTLE_ANIM_BOSS_MONSTRO_FOGO,
-    BATTLE_ANIM_PROJECTILE_PLAYER,
-    BATTLE_ANIM_PROJECTILE_BOSS,
-    BATTLE_ANIM_COUNT
-} BattleAnimationId;
+// Dados compartilhados de uma animação (paths + textures carregadas).
+// Vários personagens podem apontar para o mesmo conjunto de dados.
+typedef struct {
+    const char **paths;     // lista de caminhos dos frames
+    int frame_count;        // quantos frames existem
+    double intervalo_ms;    // tempo entre frames
+    Texture2D *frames;      // textures carregadas (tamanho = frame_count)
+} AnimacaoDados;
 
-// Estrutura basica para gerenciar animacao em batalha.
-typedef struct BattleAnimation {
-    Texture2D *frames;
-    int frame_count;
+// Estado individual da animação de um personagem/projétil.
+// Cada entidade guarda qual frame está ativo e o tempo acumulado.
+typedef struct {
+    AnimacaoDados *dados;   // aponta para os dados compartilhados
     int frame_atual;
-    double intervalo_ms;
     double acumulado_ms;
-} BattleAnimation;
+    Texture2D textura_atual; // texture do frame atual para uso rápido
+} AnimacaoEstado;
 
-// Utilitarios basicos (tambem usados pelo gerenciador)
-BattleAnimation *criar_battle_animation(const char *frame_paths[], int frame_count, double intervalo_ms);
-void atualizar_battle_animation(BattleAnimation *anim, bool personagem_em_movimento);
-Texture2D battle_animation_get_frame(const BattleAnimation *anim);
-void descarregar_battle_animation(BattleAnimation *anim);
+// Utilitários simples para carregar/usar animações (não existe mais gerenciador central).
+bool carregar_animacao_dados(AnimacaoDados *anim, const char **paths, int frame_count, double intervalo_ms);
+void descarregar_animacao_dados(AnimacaoDados *anim);
+void iniciar_animacao_estado(AnimacaoEstado *estado, AnimacaoDados *dados);
+void atualizar_animacao_estado(AnimacaoEstado *estado, bool em_movimento);
+Texture2D animacao_frame_atual(const AnimacaoEstado *estado);
+
+// Desenha a mira customizada sobre henchmen.
 void mostrar_mira(henchman *henchman);
-
-// API do gerenciador centralizado
-BattleAnimation *obter_battle_animation(BattleAnimationId id);
-void descarregar_animacoes_batalha(void);
 
 #endif

@@ -8,6 +8,7 @@
 #include "movimentacao/animacao.h"
 #include "battle/battles.h"
 #include "battle/battlefunctions.h"
+#include "battle/entidades.h"
 
 
 int direcao = 1;
@@ -27,16 +28,23 @@ int main(){
     float escala = 0.05f;
 
     //inside the battle
-    // Animacoes usadas dentro da batalha para player, boss e capangas (obtidas do gerenciador).
-    BattleAnimation *player_battle_anim = obter_battle_animation(BATTLE_ANIM_PLAYER_MAGO);
-    Personagem_em_batalha battle_player = {640, 360, 300.0f, 100, 10, 1, player_battle_anim};
-    BattleAnimation *boss_anim = obter_battle_animation(BATTLE_ANIM_BOSS_MONSTRO_FOGO);
-    Personagem_em_batalha boss = {1024, 360, 200.0f, 100, 10, 0, boss_anim};
+    // Carrega configuracoes (paths + stats) para cada batalha em um catálogo simples.
+    CatalogoBatalhas catalogo;
+    if (!carregar_catalogo_batalhas(&catalogo)) {
+        TraceLog(LOG_ERROR, "Falha ao carregar sprites de batalha");
+        CloseWindow();
+        return 1;
+    }
+
+    // Estados iniciais do player/boss em batalha usando batalha 1 como padrao.
+    Personagem_em_batalha battle_player = {640, 360, catalogo.batalha1.player.speed, catalogo.batalha1.player.hp, catalogo.batalha1.player.damage, 1, {0}};
+    iniciar_animacao_estado(&battle_player.anim, &catalogo.batalha1.player.animacao);
+    Personagem_em_batalha boss = {1024, 360, catalogo.batalha1.boss.speed, catalogo.batalha1.boss.hp, catalogo.batalha1.boss.damage, 0, {0}};
+    iniciar_animacao_estado(&boss.anim, &catalogo.batalha1.boss.animacao);
     
     henchman henchList[MAX_HENCH]; 
     memset(henchList, 0, sizeof(henchList)); // Zera a lista para garantir que 'active' seja 0
 
-    BattleAnimation *henchman_anim = obter_battle_animation(BATTLE_ANIM_HENCH_MONSTRO_PEDRA);
     //TEXTURA DO FUNDO DA BATALHA
     Image img_cenario_de_pedra = LoadImage("img/battle/cenarios/cenario_pedra.png");
     ImageResize(&img_cenario_de_pedra, 1280, 720);
@@ -58,6 +66,7 @@ int main(){
     // opcoes de tela
     int opcao = 0;
     int opcao_battle = 0; // batalha selecionada
+    EntidadesBatalha *ent_atual = &catalogo.batalha1; // ponteiro para a config (sprites + stats) da batalha atual
    
     //lista de locais ondee vai ser iniciada a batalha
     coordenadas *hitbox_para_iniciar_batalha=NULL;
@@ -97,16 +106,20 @@ int main(){
             if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2) || verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
                 DrawText("press space to start battle", 10, 60, 20, BLACK);
                 if (IsKeyPressed(KEY_SPACE)) {
-                    reiniciar_batalha(henchList, &battle_player, &boss); // Reinicia todo o estado da batalha
                     if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 1)) {
                         opcao_battle = 1; 
+                        ent_atual = &catalogo.batalha1;
                     }
                     if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 2)) {
                         opcao_battle = 2; 
+                        ent_atual = &catalogo.batalha2;
                     }
                     if (verificacao_de_area(&hitbox_para_iniciar_batalha, &p, 3)) {
                         opcao_battle = 3; 
+                        ent_atual = &catalogo.batalha3;
                     }
+                    // Atualiza stats/animações conforme batalha selecionada e reseta estado.
+                    reiniciar_batalha(henchList, &battle_player, &boss, ent_atual);
                     DrawText("Batalha iniciada!", 10, 80, 20, BLACK);
                     opcao = 2; // Muda para a tela de batalha
                 }
@@ -120,13 +133,16 @@ int main(){
             ClearBackground(BLACK);
 
             if (opcao_battle == 1) {
-                batalha(&battle_player,cenario_de_pedra,henchList,henchman_anim,&boss, &direcao);
+                //batalha de pedra
+                batalha(&battle_player, cenario_de_pedra, henchList, ent_atual, &boss, &direcao);
             }
             if (opcao_battle == 2) {
-                batalha(&battle_player,cenario_de_planta,henchList,henchman_anim,&boss, &direcao);
+                //batalha de planta
+                batalha(&battle_player, cenario_de_planta, henchList, ent_atual, &boss, &direcao);
             }
             if (opcao_battle == 3) {
-                batalha(&battle_player,cenario_de_fogo,henchList,henchman_anim,&boss, &direcao);
+                //batalha de fogo
+                batalha(&battle_player, cenario_de_fogo, henchList, ent_atual, &boss, &direcao);
             }
             if (IsKeyPressed(KEY_M) || battle_player.hp <= 0) {
                 opcao = 1; // Volta para a tela do mapa
@@ -139,7 +155,8 @@ int main(){
     // limpeza final
     descarregar_texturas();
     // descarrega todas as animacoes de batalha compartilhadas.
-    descarregar_animacoes_batalha();
+
+    descarregar_catalogo_batalhas(&catalogo);
     UnloadTexture(cenario_de_pedra);
     UnloadTexture(cenario_de_fogo);
     UnloadTexture(cenario_de_planta);
