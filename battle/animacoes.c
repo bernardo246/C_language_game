@@ -57,7 +57,7 @@ void iniciar_animacao_estado(AnimacaoEstado *estado, AnimacaoDados *dados) {
 
 // Converte delta de raylib (s) para ms.
 static inline double delta_ms(void) {
-    return GetFrameTime() * 1000.0;
+    return GetFrameTime();
 }
 
 // Avança a animação se o personagem/projétil está em movimento.
