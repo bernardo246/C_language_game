@@ -67,6 +67,11 @@ Você precisará ter o **GCC** (ou Clang) e a biblioteca **Raylib** instalada em
 | `ESC` ou `X` | Voltar / Cancelar (se aplicável) |
 
 
+## 📽️Screencast:
+
+[![Screencast](https://img.shields.io/badge/Primeira_entrega-Assista-blue?logo=youtube)](https://youtu.be/06-HFS6M4ms)
+
+
 
 ## 📄 Licença
 
