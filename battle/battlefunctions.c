@@ -251,7 +251,7 @@ void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mo
 // wave system
 void init_wave_manager(WaveManager *waveManager) {
     waveManager->wave = 1;
-    waveManager->enemiesToSpawn = 3; 
+    waveManager->enemiesToSpawn = 7; 
     waveManager->spawnRate = 1.5f;   
     waveManager->spawnTimer = 0.0f;
     waveManager->activeEnemies = 0;
@@ -297,7 +297,7 @@ void update_wave(WaveManager *waveManager, henchman *henchList, DadosEntidade *h
 
         
         if (waveManager->wave == 2) {
-            waveManager->enemiesToSpawn = 7;
+            waveManager->enemiesToSpawn = 11;
             waveManager->spawnRate = 1.0f;
         }
     }
