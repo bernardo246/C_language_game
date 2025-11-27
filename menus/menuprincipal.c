@@ -2,27 +2,30 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 #include <raylib.h>
 #include "menuprincipal.h"
 #include "../mapa/hitbox_mapa.h" // Inclui o cabeçalho para usar as definições
 
 int opcao_menu = 0;
+static Texture menu_fundo = {0};
+static bool menu_fundo_loaded = false;
 
 void mostrar_menu(int *tela_opcao){
-    // carrega a imagem original
+    // carrega a imagem original (somente uma vez)
     const char *imagem_path = "img/menuprincipal.png";
 
-    // Carrega a imagem original
-    Image img = LoadImage(imagem_path);
-    if (!img.data) {
-        printf("Erro: nao foi possivel carregar %s\n", imagem_path);
+    if (!menu_fundo_loaded) {
+        Image img = LoadImage(imagem_path);
+        if (!img.data) {
+            printf("Erro: nao foi possivel carregar %s\n", imagem_path);
+            return;
+        }
+        ImageResize(&img, Map_x * Tile_size, Map_y * Tile_size);
+        menu_fundo = LoadTextureFromImage(img);
+        UnloadImage(img); // evita vazamento de RAM do Image
+        menu_fundo_loaded = true;
     }
-
-    // Redimensiona a imagem para a resolução da janela
-    ImageResize(&img, Map_x * Tile_size, Map_y * Tile_size);
-
-    Texture fundo = LoadTextureFromImage(img);
-    UnloadImage(img); // evita vazamento de RAM do Image
 
     if (IsKeyPressed(KEY_DOWN)){
         opcao_menu ++;
@@ -62,7 +65,7 @@ void mostrar_menu(int *tela_opcao){
 
     ClearBackground(RAYWHITE);
 
-    DrawTexture(fundo,0,0,WHITE); //fundo do menu
+    DrawTexture(menu_fundo, 0, 0, WHITE); // fundo do menu
 
     // DrawText(opcaoText, 10, 10, 20, DARKGRAY); //opcao selecionada
     // DrawText(mouseText, 10, 40, 20, DARKGRAY); //coordenadas do mouse
@@ -75,11 +78,14 @@ void mostrar_menu(int *tela_opcao){
     }
 
     EndDrawing();
-    UnloadTexture(fundo); // evita vazamento de VRAM no menu
 }
 
 // Descarrega recursos persistentes do menu (no design atual, não há persistência)
 // Mantemos a função para corresponder ao header e evitar erro de link.
 void descarregar_menu(void) {
-    // no-op: nada a descarregar aqui
+    if (menu_fundo_loaded) {
+        UnloadTexture(menu_fundo);
+        menu_fundo = (Texture){0};
+        menu_fundo_loaded = false;
+    }
 }

@@ -81,6 +81,21 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Entidad
 
     // mira desenhada depois dos sprites, ver final da funcao
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        static Sound shootsound = {0};
+        static bool shootsound_loaded = false;
+
+        // carregando o som apenas uma vez
+        if (!shootsound_loaded) {
+            shootsound = LoadSound("som/efeitos/tiro.wav");
+            shootsound_loaded = true;
+        }
+        
+        // tocando o som
+        if (shootsound_loaded) {
+            PlaySound(shootsound);
+        }
+        
+        // disparando o projetil
         Vector2 mouse = GetMousePosition();
         spawn_projectile(projectiles, player, mouse, player_projectile);
     }

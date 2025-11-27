@@ -211,7 +211,7 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
             src,
             dest,
             origin,
-            angle * RAD2DEG,
+            0, // angulo padrao
             WHITE
         );
     }
@@ -251,7 +251,7 @@ void spawn_projectile(Projectile *projList, Personagem_em_batalha *p, Vector2 mo
 // wave system
 void init_wave_manager(WaveManager *waveManager) {
     waveManager->wave = 1;
-    waveManager->enemiesToSpawn = 3; 
+    waveManager->enemiesToSpawn = 6; 
     waveManager->spawnRate = 1.5f;   
     waveManager->spawnTimer = 0.0f;
     waveManager->activeEnemies = 0;
