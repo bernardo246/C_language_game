@@ -18,11 +18,21 @@ int main(){
     const int screenY = 720;
     InitWindow(screenX,screenY,"magic battle");
     SetTargetFPS(60); 
+
     
     //mapa
     int mapa[Map_y][Map_x];
     Texture fundo=carregar_mapa(mapa);
     
+
+    //musica de fundo
+    InitAudioDevice();
+
+    Music defaultMusic = LoadMusicStream("som/defaultMusic.mp3");
+    PlayMusicStream(defaultMusic);
+    SetMusicVolume(defaultMusic, 0.5f);
+
+
     // personagem (textura será definida pela animação; evita carregar aqui)
     Personagem p = (Personagem){792, 174, 1.5f, (Texture){0}};
     float escala = 0.05f;
@@ -78,6 +88,8 @@ int main(){
     
     while(!WindowShouldClose()){
         
+        UpdateMusicStream(defaultMusic);
+
         if(opcao==0){
             // menu principal (desenha e atualiza a opção)
             mostrar_menu(&opcao);
@@ -162,6 +174,8 @@ int main(){
     UnloadTexture(cenario_de_planta);
     UnloadTexture(fundo);
     descarregar_menu();
+    UnloadMusicStream(defaultMusic);
+    CloseAudioDevice();
     CloseWindow();
     return 0;
     

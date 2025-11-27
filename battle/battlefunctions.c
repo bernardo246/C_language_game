@@ -76,7 +76,7 @@ void mov_battle(Personagem_em_batalha *p)
     float dt = GetFrameTime();
     bool personagem_em_movimento = false;
 
-    float angle = atan2(mouse.y - p->y, mouse.x - p->x);
+    float angle = atan2(mouse.y - p->y, mouse.x - p->x); // a funcao atan2 retorna o angulo em radianos
 
     if (IsKeyDown(KEY_W)) {
         p->y -= p->speed * dt;
@@ -112,7 +112,7 @@ void mov_battle(Personagem_em_batalha *p)
     Rectangle dest = {p->x, p->y, frame.width * scale, frame.height * scale};
     Vector2 origin = {dest.width / 2.0f, dest.height / 2.0f};
 
-    DrawTexturePro(frame, src, dest, origin, angle * RAD2DEG, WHITE);
+    DrawTexturePro(frame, src, dest, origin, angle * RAD2DEG, WHITE); // converte radianos para graus
 }
 
 
