@@ -6,7 +6,6 @@
 #include <stdbool.h>
 #include "battlefunctions.h"
 
-float angle;
 // Escala unica aplicada aos sprites dos capangas na batalha
 static const float HENCHMAN_SCALE = 0.10f;          // escala visual
 static const float HENCHMAN_COLLISION_SCALE = 0.08f;
@@ -14,6 +13,9 @@ static const float PLAYER_COLLISION_SCALE = 0.08f;
 static const float BOSS_COLLISION_SCALE = 0.08f;
 static const float BOSS_DRAW_SCALE = 0.2f; // Escala para desenhar o boss. Ajuste conforme necessário.
 static const float PROJECTILE_SCALE = 0.10f;
+
+
+
 
 // Calcula o raio aproximado de um capanga usando a textura escalonada
 static float get_henchman_radius(const henchman *h) {
@@ -196,8 +198,6 @@ void update_and_draw_henchmen(henchman *henchList, Personagem_em_batalha *p) {
 
         henchman *h = &henchList[i];
 
-        // Calcula o angulo para desenhar o sprite apontado para o jogador
-        float angle = atan2f(p->y - h->y, p->x - h->x);
         Texture2D frame = animacao_frame_atual(&h->anim);
         if (frame.id == 0) {
             continue;
@@ -434,8 +434,23 @@ void wizard_x_henchman_collisions(Personagem_em_batalha *p, henchman *henchList)
             (float)henchFrame.height * HENCHMAN_COLLISION_SCALE
         };
         if (CheckCollisionRecs(playerRect, henchmanRect)) {
+    
             p->hp -= henchList[i].damage;
             henchList[i].active = 0;
+
+            static Sound henchmanHitSound = {0};
+            static bool henchmanHitSoundLoaded = false;
+
+            // carregando o som apenas uma vez
+            if (!henchmanHitSoundLoaded) {
+                henchmanHitSound = LoadSound("som/efeitos/punch.wav");
+                henchmanHitSoundLoaded = true;
+            }
+            // tocando o som
+            if (henchmanHitSoundLoaded) {
+                PlaySound(henchmanHitSound);
+            }
+
         }
     }
 }
@@ -503,6 +518,18 @@ void Collision_boss_projectile(Personagem_em_batalha *p, Projectile *projList,in
             if (p->hp <= 0) {    
                 p->active = 0;             
             }
+
+            // Som de acerto do projetil no alvo (reuso do punch)
+            static Sound bossHitSound = {0};
+            static bool bossHitSoundLoaded = false;
+            if (!bossHitSoundLoaded) {
+                bossHitSound = LoadSound("som/efeitos/punch.wav");
+                bossHitSoundLoaded = true;
+            }
+            if (bossHitSoundLoaded) {
+                PlaySound(bossHitSound);
+            }
+
             break; 
         }
     }
@@ -526,6 +553,19 @@ void spawn_projectile_boss(Projectile *projList, Personagem_em_batalha *p,Person
                 projList[i].dx = 0;
                 projList[i].dy = 0;
             }
+
+            //som de disparo do boss
+            static Sound bossShootSound = {0};
+            static bool bossShootSoundLoaded = false;
+
+            if (!bossShootSoundLoaded) {
+                bossShootSound = LoadSound("som/efeitos/whoosh_1.wav");
+                bossShootSoundLoaded = true;
+            }
+            if (bossShootSoundLoaded) {
+                PlaySound(bossShootSound);
+            }
+
 
             projList[i].speed = dados_proj->speed;
             iniciar_animacao_estado(&projList[i].anim, &dados_proj->animacao);
