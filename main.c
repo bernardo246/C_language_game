@@ -86,6 +86,11 @@ int main(){
     
     char posText[32];
     
+    bool vitoria_1 = false;
+    bool vitoria_2 = false;
+    bool vitoria_3 = false;
+    
+
     while(!WindowShouldClose()){
         
         UpdateMusicStream(defaultMusic);
@@ -110,7 +115,7 @@ int main(){
 
             DrawTexture(fundo,0,0,WHITE);
             DrawText(posText, 10, 10, 20, BLACK);
-            DrawCircle(p.x,p.y,6,RED);
+
             
             animacao_do_mago_no_mapa(&p);
             DrawTextureEx(p.t, (Vector2){ p.x - (p.t.width*escala)/2, p.y - ((p.t.height*escala)-430 * escala) }, 0.0f, escala, WHITE); // estou desenhando redimensionando. esse -430 eh pq a imagem do mago tem mt espaço vazio embaixo
@@ -146,17 +151,17 @@ int main(){
 
             if (opcao_battle == 1) {
                 //batalha de pedra
-                batalha(&battle_player, cenario_de_pedra, henchList, ent_atual, &boss, &direcao);
+                batalha(&battle_player, cenario_de_pedra, henchList, ent_atual, &boss, &direcao,vitoria_1);
             }
             if (opcao_battle == 2) {
                 //batalha de planta
-                batalha(&battle_player, cenario_de_planta, henchList, ent_atual, &boss, &direcao);
+                batalha(&battle_player, cenario_de_planta, henchList, ent_atual, &boss, &direcao,vitoria_2);
             }
             if (opcao_battle == 3) {
                 //batalha de fogo
-                batalha(&battle_player, cenario_de_fogo, henchList, ent_atual, &boss, &direcao);
+                batalha(&battle_player, cenario_de_fogo, henchList, ent_atual, &boss, &direcao,vitoria_3);
             }
-            if (IsKeyPressed(KEY_M) || battle_player.hp <= 0) {
+            if (IsKeyPressed(KEY_M) ) {
                 opcao = 1; // Volta para a tela do mapa
             }
             EndDrawing();

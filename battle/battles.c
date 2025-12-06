@@ -40,7 +40,7 @@ void reiniciar_batalha(henchman *list, Personagem_em_batalha *player, Personagem
 
 // Loop principal de uma batalha completa (UI, entradas e atualizacoes).
 // Loop de uma batalha completa: desenha HUD, lida com entrada, spawns, movimentos e colisões.
-void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,EntidadesBatalha *ent, Personagem_em_batalha *boss, int *direcao) {
+void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,EntidadesBatalha *ent, Personagem_em_batalha *boss, int *direcao,bool vitoria) {
     if (!ent) return;
     DadosProjetil *player_projectile = &ent->projetil_player;
     DadosProjetil *boss_projectile = &ent->projetil_boss;
@@ -64,7 +64,13 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Entidad
     if (waveManager.wave > 3) {
         mostrar_mira(list); // Continua mostrando a mira para clicar no botão
         desenhar_menu_vitoria(); // A ação do botão será tratada no main.c
+        vitoria = true;
         return; // Interrompe a execução do resto da lógica da batalha
+    }
+    if (player->hp <=0){
+        mostrar_mira(list); // Continua mostrando a mira para clicar no botão
+        desenhar_menu_derrota();
+        return;
     }
 
     if (boss->active) boss_movement(boss, direcao);

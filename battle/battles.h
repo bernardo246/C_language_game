@@ -9,6 +9,6 @@
 
 
 void reiniciar_batalha(henchman *list, Personagem_em_batalha *player, Personagem_em_batalha *boss, EntidadesBatalha *ent);
-void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,EntidadesBatalha *ent, Personagem_em_batalha *boss, int *direcao);
+void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,EntidadesBatalha *ent, Personagem_em_batalha *boss, int *direcao,bool vitoria);
 
 #endif

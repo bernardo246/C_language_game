@@ -332,6 +332,25 @@ void desenhar_menu_vitoria(void) {
     int largura_instrucao = MeasureText(instrucao, tamanho_instrucao);
     DrawText(instrucao, (screenWidth - largura_instrucao) / 2, screenHeight / 2 + 50, tamanho_instrucao, WHITE);
 }
+void desenhar_menu_derrota(void) {
+    const int screenWidth = GetScreenWidth();
+    const int screenHeight = GetScreenHeight();
+
+    // 1. Escurece o fundo para dar foco ao menu
+    DrawRectangle(0, 0, screenWidth, screenHeight, Fade(BLACK, 0.7f));
+
+    // 2. Desenha o texto de vitoria
+    const char *titulo = "DERROTA 😭";
+    const int tamanho_titulo = 100;
+    int largura_titulo = MeasureText(titulo, tamanho_titulo);// serve para sentralizar e otimizar a quantidade de pixels utilizados
+    DrawText(titulo, (screenWidth - largura_titulo) / 2, screenHeight / 2 - 100, tamanho_titulo, RED);
+
+    // 3. Desenha a instrução para voltar ao mapa
+    const char *instrucao = "Pressione 'M' para voltar ao mapa";
+    const int tamanho_instrucao = 30;
+    int largura_instrucao = MeasureText(instrucao, tamanho_instrucao);
+    DrawText(instrucao, (screenWidth - largura_instrucao) / 2, screenHeight / 2 + 50, tamanho_instrucao, WHITE);
+}
 
 
 //update projectile
