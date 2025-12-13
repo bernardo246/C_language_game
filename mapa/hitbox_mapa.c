@@ -93,10 +93,10 @@ void logica_de_colisao_movimentacao(Personagem *p, int mapa[Map_y][Map_x]){
     float dx= p->x;
     float dy= p->y;
     //movimentaçao
-    if(IsKeyDown(KEY_RIGHT)) dx += p->speed;
-    if(IsKeyDown(KEY_LEFT))  dx -= p->speed;
-    if(IsKeyDown(KEY_UP))    dy -= p->speed;
-    if(IsKeyDown(KEY_DOWN))  dy += p->speed;
+    if(IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) dx += p->speed;
+    if(IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))  dx -= p->speed;
+    if(IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))    dy -= p->speed;
+    if(IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))  dy += p->speed;
     //calculo da tile que ele estaria dps do movimento = chunk que ele esta conjunto de pixels 4x4
     int tileX= (int)(dx/Tile_size);
     int tileY= (int)(dy/Tile_size);

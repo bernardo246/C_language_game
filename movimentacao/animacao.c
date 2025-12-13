@@ -82,7 +82,9 @@ void animacao_do_mago_no_mapa(Personagem *p){
     }
 
 
-    if (IsKeyUp(KEY_RIGHT) && IsKeyUp(KEY_DOWN) && IsKeyUp(KEY_LEFT) && IsKeyUp(KEY_UP)) {
+    // idle frame only when nenhuma tecla de movimento (setas ou WASD) está pressionada
+    if (!IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_DOWN) && !IsKeyDown(KEY_LEFT) && !IsKeyDown(KEY_UP) &&
+        !IsKeyDown(KEY_W) && !IsKeyDown(KEY_A) && !IsKeyDown(KEY_S) && !IsKeyDown(KEY_D)) {
         if (direcao_atual == 0) {
             p->t = norte[0];
         } else if (direcao_atual == 1) {
@@ -94,7 +96,7 @@ void animacao_do_mago_no_mapa(Personagem *p){
         }
     }
 
-    if (IsKeyDown(KEY_UP)){
+    if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)){
         direcao_atual = 0; // norte
         if (passou_tempo_animacao(tempoanimacao)){
             if (usou_animacao == 0){
@@ -115,7 +117,7 @@ void animacao_do_mago_no_mapa(Personagem *p){
         }
     }
 
-    else if (IsKeyDown(KEY_RIGHT)){
+    else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)){
         direcao_atual = 1; // leste
         if (passou_tempo_animacao(tempoanimacao)){
             if (usou_animacao == 0){
@@ -136,7 +138,7 @@ void animacao_do_mago_no_mapa(Personagem *p){
         }
     }
 
-    else if (IsKeyDown(KEY_LEFT)){
+    else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)){
         direcao_atual = 2; // oeste
         if (passou_tempo_animacao(tempoanimacao)){
             if (usou_animacao == 0){
@@ -157,7 +159,7 @@ void animacao_do_mago_no_mapa(Personagem *p){
         }
     }
 
-    else if (IsKeyDown(KEY_DOWN)){
+    else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)){
         direcao_atual = 3; // sul
         if (passou_tempo_animacao(tempoanimacao)){
             if (usou_animacao == 0){
