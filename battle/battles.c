@@ -17,6 +17,8 @@ static Projectile boss_projectiles[MAX_PROJECTILES];
 static WaveManager waveManager;
 static float bossAttackTimer = 2.0f; // Chefe ataca a cada 2 segundos
 static bool cursor_oculto = false;   // controla se o cursor padrao ja foi escondido
+static const float playerShootCooldown = 0.3f; // segundos entre disparos do jogador
+static float playerShootTimer = 0.0f;
 
 // Reinicia o estado completo da batalha para um novo começo.
 void reiniciar_batalha(henchman *list, Personagem_em_batalha *player, Personagem_em_batalha *boss, EntidadesBatalha *ent) {
@@ -24,6 +26,8 @@ void reiniciar_batalha(henchman *list, Personagem_em_batalha *player, Personagem
     memset(projectiles, 0, sizeof(projectiles));
     memset(boss_projectiles, 0, sizeof(boss_projectiles));
     init_wave_manager(&waveManager);
+    bossAttackTimer = 2.0f;
+    playerShootTimer = 0.0f;
 
     // Recarrega stats e animações a partir da configuração da batalha selecionada.
     player->hp = ent->player.hp;
@@ -75,6 +79,9 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Entidad
 
     if (boss->active) boss_movement(boss, direcao);
     mov_battle(player);
+    // atualiza cooldown do tiro do jogador
+    playerShootTimer -= GetFrameTime();
+    if (playerShootTimer < 0.0f) playerShootTimer = 0.0f;
 
     // Lógica de ataque do chefe
     if (boss->active) {
@@ -86,7 +93,7 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Entidad
     }
 
     // mira desenhada depois dos sprites, ver final da funcao
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && playerShootTimer <= 0.0f) {
         static Sound shootsound = {0};
         static bool shootsound_loaded = false;
 
@@ -104,6 +111,7 @@ void batalha(Personagem_em_batalha *player,Texture2D back,henchman *list,Entidad
         // disparando o projetil
         Vector2 mouse = GetMousePosition();
         spawn_projectile(projectiles, player, mouse, player_projectile);
+        playerShootTimer = playerShootCooldown;
     }
  
     if (waveManager.wave >= 3 && !boss->active) {

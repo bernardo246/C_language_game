@@ -51,7 +51,7 @@ static void preencher_config(EntidadesBatalha *d, const char **player_frames, in
     d->hench.animacao.intervalo_ms = 150.0;
 
     d->boss.speed = 200.0f;
-    d->boss.hp = 100;
+    d->boss.hp = 80;
     d->boss.damage = 10;
     d->boss.animacao.paths = boss_frames;
     d->boss.animacao.frame_count = boss_count;
@@ -64,7 +64,7 @@ static void preencher_config(EntidadesBatalha *d, const char **player_frames, in
     d->projetil_player.animacao.intervalo_ms = 80.0;
 
     d->projetil_boss.speed = 600.0f;
-    d->projetil_boss.damage = 10;
+    d->projetil_boss.damage = 15;
     d->projetil_boss.animacao.paths = proj_b_frames;
     d->projetil_boss.animacao.frame_count = proj_b_count;
     d->projetil_boss.animacao.intervalo_ms = 80.0;
